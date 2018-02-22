@@ -14,6 +14,7 @@
 #include <Nazara/Physics2D/Config.hpp>
 #include <Nazara/Physics2D/Collider2D.hpp>
 #include <limits>
+#include <functional>
 
 struct cpBody;
 
@@ -67,6 +68,7 @@ namespace Nz
 			void SetStatic(bool setStaticBody = true);
 			void SetUserdata(void* ud);
 			void SetVelocity(const Vector2f& velocity);
+			void SetVelocityFunction(const std::function<void(const Nz::Vector2f&, float, float)> & function);
 
 			RigidBody2D& operator=(const RigidBody2D& object);
 			RigidBody2D& operator=(RigidBody2D&& object);

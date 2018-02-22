@@ -395,6 +395,17 @@ namespace Nz
 		cpBodySetVelocity(m_handle, cpv(velocity.x, velocity.y));
 	}
 
+	void RigidBody2D::SetVelocityFunction(const std::function<void(const Nz::Vector2f&, float, float)> & function)
+	{
+		NazaraAssert(function, "Function null");
+
+		m_handle->velocity_func = [function](cpBody *body, cpVect cpGravity, cpFloat damping, cpFloat dt)
+		{
+			Nz::Vector2f gravity(cpGravity.x, cpGravity.y);
+			function(gravity, damping, dt);
+		};
+	}
+
 	RigidBody2D& RigidBody2D::operator=(const RigidBody2D& object)
 	{
 		RigidBody2D physObj(object);
