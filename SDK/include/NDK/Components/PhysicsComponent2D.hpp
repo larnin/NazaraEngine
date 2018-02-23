@@ -47,6 +47,8 @@ namespace Ndk
 			void SetRotation(float rotation);
 			void SetVelocity(const Nz::Vector2f& velocity);
 
+			void SetVelocityFunction(const Nz::RigidBody2D::VelocityFunction & function);
+
 			static ComponentIndex componentIndex;
 
 		private:

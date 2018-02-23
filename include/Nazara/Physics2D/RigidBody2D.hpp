@@ -25,6 +25,8 @@ namespace Nz
 	class NAZARA_PHYSICS2D_API RigidBody2D
 	{
 		public:
+			using VelocityFunction = std::function<void(const Nz::Vector2f&, float, float)>;
+
 			RigidBody2D(PhysWorld2D* world, float mass);
 			RigidBody2D(PhysWorld2D* world, float mass, Collider2DRef geom);
 			RigidBody2D(const RigidBody2D& object);
@@ -68,7 +70,7 @@ namespace Nz
 			void SetStatic(bool setStaticBody = true);
 			void SetUserdata(void* ud);
 			void SetVelocity(const Vector2f& velocity);
-			void SetVelocityFunction(const std::function<void(const Nz::Vector2f&, float, float)> & function);
+			void SetVelocityFunction(const VelocityFunction & function);
 
 			RigidBody2D& operator=(const RigidBody2D& object);
 			RigidBody2D& operator=(RigidBody2D&& object);
@@ -96,6 +98,7 @@ namespace Nz
 			bool m_isStatic;
 			float m_gravityFactor;
 			float m_mass;
+			VelocityFunction m_velocityFonction;
 	};
 }
 

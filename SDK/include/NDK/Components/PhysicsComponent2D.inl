@@ -3,6 +3,7 @@
 // For conditions of distribution and use, see copyright notice in Prerequisites.hpp
 
 #include <Nazara/Core/Error.hpp>
+#include "PhysicsComponent2D.hpp"
 
 namespace Ndk
 {
@@ -300,6 +301,13 @@ namespace Ndk
 		NazaraAssert(m_object, "Invalid physics object");
 
 		m_object->SetVelocity(velocity);
+	}
+
+	inline void PhysicsComponent2D::SetVelocityFunction(const Nz::RigidBody2D::VelocityFunction & function)
+	{
+		NazaraAssert(m_object, "Invalid physics object");
+
+		m_object->SetVelocityFunction(function);
 	}
 
 	/*!
