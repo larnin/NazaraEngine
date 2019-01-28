@@ -28,7 +28,7 @@ namespace Nz
 		public:
 			struct Tile;
 
-			inline TileMap(const Nz::Vector2ui& mapSize, const Nz::Vector2f& tileSize, std::size_t materialCount = 1);
+			inline TileMap(const Nz::Vector2ui& mapSize, const Nz::Vector2f& tileSize, std::size_t materialCount = 1, Nz::Vector2f tilt = Nz::Vector2f{ 0.f, 0.f });
 			TileMap(const TileMap&) = default;
 			TileMap(TileMap&&) = delete;
 			~TileMap() = default;
@@ -43,8 +43,8 @@ namespace Nz
 
 			inline void EnableIsometricMode(bool isometric);
 
-			inline void EnableTile(const Vector2ui& tilePos, const Rectf& coords, const Color& color = Color::White, std::size_t materialIndex = 0U);
-			inline void EnableTile(const Vector2ui& tilePos, const Rectui& rect, const Color& color = Color::White, std::size_t materialIndex = 0U);
+			inline void EnableTile(const Vector2ui& tilePos, const Rectf& coords, const Color& color = Color::White, std::size_t materialIndex = 0U, float height = 0);
+			inline void EnableTile(const Vector2ui& tilePos, const Rectui& rect, const Color& color = Color::White, std::size_t materialIndex = 0U, float height = 0);
 			inline void EnableTiles(const Rectf& coords, const Color& color = Color::White, std::size_t materialIndex = 0U);
 			inline void EnableTiles(const Rectui& rect, const Color& color = Color::White, std::size_t materialIndex = 0U);
 			inline void EnableTiles(const Vector2ui* tilesPos, std::size_t tileCount, const Rectf& coords, const Color& color = Color::White, std::size_t materialIndex = 0U);
@@ -54,6 +54,9 @@ namespace Nz
 			inline Vector2f GetSize() const;
 			inline const Tile& GetTile(const Vector2ui& tilePos) const;
 			inline const Vector2f& GetTileSize() const;
+
+			inline void SetTilt(const Vector2f & tilt);
+			inline const Vector2f GetTilt() const;
 
 			inline bool IsIsometricModeEnabled() const;
 
@@ -70,6 +73,7 @@ namespace Nz
 				Color color = Color::White;
 				Rectf textureCoords = Rectf::Zero();
 				bool enabled = false;
+				float height = 0;
 			};
 
 		private:
@@ -84,6 +88,7 @@ namespace Nz
 				std::set<std::size_t> tiles;
 			};
 
+			Vector2f m_tilt;
 			std::vector<Tile> m_tiles;
 			std::vector<Layer> m_layers;
 			Vector2ui m_mapSize;

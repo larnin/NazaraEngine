@@ -20,11 +20,12 @@ namespace Nz
 	*
 	* \remark The default material is used for every material requested
 	*/
-	inline TileMap::TileMap(const Nz::Vector2ui& mapSize, const Nz::Vector2f& tileSize, std::size_t materialCount) :
+	inline TileMap::TileMap(const Nz::Vector2ui& mapSize, const Nz::Vector2f& tileSize, std::size_t materialCount, Nz::Vector2f tilt) :
 	m_tiles(mapSize.x * mapSize.y),
 	m_layers(materialCount),
 	m_mapSize(mapSize),
 	m_tileSize(tileSize),
+	m_tilt(tilt),
 	m_isometricModeEnabled(false)
 	{
 		NazaraAssert(m_tiles.size() != 0U, "Invalid map size");
@@ -132,10 +133,11 @@ namespace Nz
 	* \param coords Normalized coordinates ([0..1]) used to specify which region of the material textures will be used
 	* \param color The multiplicative color applied to the tile
 	* \param materialIndex The material which will be used for rendering this tile
+	* \param height The Z offset of the tile, usefull in order to put that tile at the front or back of an other object
 	*
 	* \see EnableTiles
 	*/
-	inline void TileMap::EnableTile(const Vector2ui& tilePos, const Rectf& coords, const Color& color, std::size_t materialIndex)
+	inline void TileMap::EnableTile(const Vector2ui& tilePos, const Rectf& coords, const Color& color, std::size_t materialIndex, float height)
 	{
 		NazaraAssert(tilePos.x < m_mapSize.x && tilePos.y < m_mapSize.y, "Tile position is out of bounds");
 		NazaraAssert(materialIndex < m_layers.size(), "Material out of bounds");
@@ -159,6 +161,7 @@ namespace Nz
 		tile.color = color;
 		tile.textureCoords = coords;
 		tile.layerIndex = materialIndex;
+		tile.height = height;
 
 		InvalidateInstanceData(invalidatedLayers);
 	}
@@ -172,13 +175,14 @@ namespace Nz
 	* \param coords Unnormalized coordinates ([0..size]) used to specify which region of the material textures will be used
 	* \param color The multiplicative color applied to the tile
 	* \param materialIndex The material which will be used for rendering this tile
+	* \param height The Z offset of the tile, usefull in order to put that tile at the front or back of an other object
 	*
 	* \remark The material at [materialIndex] must have a valid diffuse map before using this function,
 	*         as the size of the material diffuse map is used to compute normalized texture coordinates before returning.
 	*
 	* \see EnableTiles
 	*/
-	inline void TileMap::EnableTile(const Vector2ui& tilePos, const Rectui& rect, const Color& color, std::size_t materialIndex)
+	inline void TileMap::EnableTile(const Vector2ui& tilePos, const Rectui& rect, const Color& color, std::size_t materialIndex, float height)
 	{
 		NazaraAssert(materialIndex < m_layers.size(), "Material out of bounds");
 
@@ -190,7 +194,7 @@ namespace Nz
 		float invHeight = 1.f / diffuseMap->GetHeight();
 
 		Rectf unnormalizedCoords(invWidth * rect.x, invHeight * rect.y, invWidth * rect.width, invHeight * rect.height);
-		EnableTile(tilePos, unnormalizedCoords, color, materialIndex);
+		EnableTile(tilePos, unnormalizedCoords, color, materialIndex, height);
 	}
 
 	/*!
@@ -381,6 +385,36 @@ namespace Nz
 	inline const Vector2f& TileMap::GetTileSize() const
 	{
 		return m_tileSize;
+	}
+
+	/*!
+	* \brief Sets the tilt of the tilemap (i.e. the Z offset value per tile unit on each direction)
+	*/
+	inline void TileMap::SetTilt(const Vector2f & tilt)
+	{
+		if (m_tilt == tilt)
+			return;
+
+		m_tilt = tilt;
+
+		UInt32 invalidatedLayers = 0;
+		for (size_t i = 0; i < m_layers.size(); ++i)
+		{
+			invalidatedLayers |= 1 << i;
+		}
+
+		InvalidateInstanceData(invalidatedLayers);
+	}
+
+	/*!
+	* \brief Gets the tilt of the tilemap
+	* \return Tilt in each dimension
+	*
+	* \see SetTilt
+	*/
+	inline const Vector2f TileMap::GetTilt() const
+	{
+		return m_tilt;
 	}
 
 	/*!

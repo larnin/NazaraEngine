@@ -77,9 +77,9 @@ namespace Nz
 
 				Vector3f tileLeftCorner;
 				if (m_isometricModeEnabled)
-					tileLeftCorner.Set(x * m_tileSize.x + m_tileSize.x/2.f * (y % 2), y/2.f * -m_tileSize.y, 0.f);
+					tileLeftCorner.Set(x * m_tileSize.x + m_tileSize.x / 2.f * (y % 2), y / 2.f * -m_tileSize.y, (x + 0.5f*(y % 2))*m_tilt.x + (y / 2.f)*m_tilt.y + tile.height);
 				else
-					tileLeftCorner.Set(x * m_tileSize.x, y * -m_tileSize.y, 0.f);
+					tileLeftCorner.Set(x * m_tileSize.x, y * -m_tileSize.y, m_tilt.x * x + m_tilt.y * y + tile.height);
 
 				*colorPtr++ = tile.color;
 				*posPtr++ = instanceData->transformMatrix.Transform(tileLeftCorner);
