@@ -11,6 +11,7 @@
 #include <NDK/Widgets/ImageWidget.hpp>
 #include <NDK/Widgets/LabelWidget.hpp>
 #include <NDK/Widgets/ProgressBarWidget.hpp>
+#include <NDK/Widgets/RadioButtonWidget.hpp>
 #include <NDK/Widgets/TextAreaWidget.hpp>
 
 #endif // NDK_WIDGETS_GLOBAL_HPP
