@@ -12,4 +12,15 @@ namespace Ndk
 	m_spacing(5.f)
 	{
 	}
+
+	float BoxLayout::GetSpacing() const
+	{
+		return m_spacing;
+	}
+
+	void BoxLayout::SetSpacing(float spacing)
+	{
+		m_spacing = spacing;
+		Layout();
+	}
 }

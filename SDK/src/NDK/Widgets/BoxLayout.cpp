@@ -97,6 +97,7 @@ namespace Ndk
 		{
 			Nz::Vector2f newSize = info.widget->GetSize();
 			newSize[axis1] = info.size;
+			newSize[axis2] = layoutSize[axis2];
 
 			info.widget->Resize(newSize);
 		}

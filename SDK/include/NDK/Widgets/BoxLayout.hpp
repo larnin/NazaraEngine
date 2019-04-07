@@ -22,10 +22,15 @@ namespace Ndk
 			BoxLayout(BoxLayout&&) = default;
 			~BoxLayout() = default;
 
+			inline float GetSpacing() const;
+
 			void Layout() override;
 
 			BoxLayout& operator=(const BoxLayout&) = delete;
 			BoxLayout& operator=(BoxLayout&&) = default;
+
+			inline void SetSpacing(float spacing);
+
 
 		private:
 			struct ChildInfo
