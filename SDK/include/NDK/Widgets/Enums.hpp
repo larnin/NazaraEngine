@@ -15,6 +15,12 @@ namespace Ndk
 		BoxLayoutOrientation_Vertical
 	};
 
+	enum SliderOrientation
+	{
+		SliderOrientation_Horizontal,
+		SliderOrientation_Vertical
+	};
+
 	enum CheckboxState
 	{
 		CheckboxState_Checked,
