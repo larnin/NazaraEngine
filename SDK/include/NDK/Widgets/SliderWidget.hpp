@@ -29,6 +29,8 @@ namespace Ndk
 		inline float GetValue() const;
 		inline bool IsValueShowed() const;
 		inline SliderOrientation GetOrientation() const;
+		inline unsigned int GetPrecision() const;
+		inline unsigned int GetCharacterSize() const;
 
 		inline void SetRange(float min, float max);
 		inline void SetMinValue(float min);
@@ -37,6 +39,8 @@ namespace Ndk
 		inline void SetValue(float value);
 		inline void ShowValue(bool show);
 		inline void SetOrientation(SliderOrientation orientation);
+		inline void SetPrecision(unsigned int precision);
+		inline void SetCharacterSize(unsigned int characterSize);
 
 		inline Nz::Vector2f GetCursorSize() const;
 		inline Nz::Vector2f GetTextSize() const;
@@ -73,8 +77,8 @@ namespace Ndk
 		static Nz::Color s_cursorPressColor;
 		static float s_cursorRatio;
 		static float s_lineRatio;
-		static float s_textSize;
-		static unsigned int s_precision;
+		static float s_textHeight;
+		static float s_charWidth;
 
 		float m_minValue;
 		float m_maxValue;
@@ -84,6 +88,8 @@ namespace Ndk
 		float m_textWidth;
 		bool m_mousePressed;
 		bool m_showValue;
+		unsigned int m_precision;
+		unsigned int m_characterSize;
 	};
 }
 

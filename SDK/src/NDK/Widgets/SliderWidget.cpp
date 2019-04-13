@@ -14,8 +14,8 @@ namespace Ndk
 	Nz::Color SliderWidget::s_cursorPressColor{ 180, 180, 180 };
 	float SliderWidget::s_cursorRatio{ 0.5f };
 	float SliderWidget::s_lineRatio{ 0.1f };
-	float SliderWidget::s_textSize{ 100.f };
-	unsigned int SliderWidget::s_precision{ 3 };
+	float SliderWidget::s_textHeight{ 2.f };
+	float SliderWidget::s_charWidth{ 1.f };
 
 	SliderWidget::SliderWidget(BaseWidget* parent) :
 	BaseWidget(parent) ,
@@ -26,7 +26,9 @@ namespace Ndk
 	m_orientation{ SliderOrientation_Horizontal },
 	m_textWidth{ 100.f },
 	m_mousePressed{ false },
-	m_showValue{ true }
+	m_showValue{ true },
+	m_precision{ 3 },
+	m_characterSize{ 25 }
 	{
 		m_lineSprite = Nz::Sprite::New(Nz::Material::New("Basic2D"));
 		m_lineSprite->SetColor(s_lineColor);
@@ -87,9 +89,19 @@ namespace Ndk
 
 	void SliderWidget::UpdateSize()
 	{
-		if (m_orientation == SliderOrientation::SliderOrientation_Horizontal)
-			SetPreferredSize(Nz::Vector2f(s_textSize + 100.f, s_textSize));
-		else SetPreferredSize(GetTextSize() + Nz::Vector2f(s_textSize, s_textSize + 100.f));
+		if (!m_showValue)
+		{
+			if (m_orientation == SliderOrientation::SliderOrientation_Horizontal)
+				SetPreferredSize(Nz::Vector2f(s_charWidth * m_characterSize + 100.f, s_textHeight * m_characterSize));
+			else SetPreferredSize( Nz::Vector2f(s_charWidth * m_characterSize, s_textHeight * m_characterSize + 100.f));
+		}
+		else
+		{
+			Nz::Vector2f size = GetTextSize();
+			if (m_orientation == SliderOrientation::SliderOrientation_Horizontal)
+				SetPreferredSize(Nz::Vector2f(size.x + 100.f, size.y));
+			else SetPreferredSize(Nz::Vector2f(size.x, size.y + 100.f));
+		}
 
 		SetMinimumSize(GetPreferredSize());
 	}
@@ -100,17 +112,14 @@ namespace Ndk
 		{
 			unsigned int nbChar = static_cast<unsigned int>(std::log10(std::abs(m_value))) + 1;
 			std::string text = std::to_string(m_value);
-			if (nbChar <= 0)
-				nbChar = s_precision+2; //0.123
-			else if (nbChar < 3)
-				nbChar = s_precision+1; //1.23
-			//else 1234
+			if (m_precision > 0)
+				nbChar += m_precision + 1; //1.23
 			if (m_value < 0)
 				nbChar++; //-12.3
 			text = text.substr(0, nbChar);
 
 			m_textEntity->Enable(true);
-			m_textSprite->Update(Nz::SimpleTextDrawer::Draw(text, 25));
+			m_textSprite->Update(Nz::SimpleTextDrawer::Draw(text, m_characterSize));
 		}
 		else m_textEntity->Enable(false);
 

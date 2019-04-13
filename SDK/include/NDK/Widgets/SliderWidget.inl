@@ -26,9 +26,19 @@ namespace Ndk
 		return m_showValue;
 	}
 
-	inline SliderOrientation SliderWidget::GetOrientation() const
+	SliderOrientation SliderWidget::GetOrientation() const
 	{
 		return m_orientation;
+	}
+
+	unsigned int SliderWidget::GetPrecision() const
+	{
+		return m_precision;
+	}
+
+	unsigned int SliderWidget::GetCharacterSize() const
+	{
+		return m_characterSize;
 	}
 
 	void SliderWidget::SetRange(float min, float max)
@@ -70,12 +80,32 @@ namespace Ndk
 	{
 		m_showValue = show;
 		UpdateSize();
+		Layout();
 	}
 
 	void SliderWidget::SetOrientation(SliderOrientation orientation)
 	{
 		m_orientation = orientation;
 		UpdateSize();
+		Layout();
+	}
+
+	void SliderWidget::SetPrecision(unsigned int precision)
+	{
+		if (precision < 0)
+			precision = 0;
+		m_precision = precision;
+		UpdateText();
+		UpdateSize();
+		Layout();
+	}
+
+	void SliderWidget::SetCharacterSize(unsigned int characterSize)
+	{
+		m_characterSize = characterSize;
+		UpdateText();
+		UpdateSize();
+		Layout();
 	}
 
 	Nz::Vector2f SliderWidget::GetCursorSize() const
@@ -91,7 +121,18 @@ namespace Ndk
 	{
 		if (!m_showValue)
 			return { 0, 0 };
-		return { s_textSize , s_textSize / 2.0f };
+
+		unsigned int nbMinValueChar = static_cast<unsigned int>(std::log10(std::abs(m_minValue)));
+		if (m_minValue < 0)
+			nbMinValueChar++;
+		unsigned int nbMaxValueChar = static_cast<unsigned int>(std::log10(std::abs(m_maxValue)));
+		if (m_maxValue < 0)
+			nbMaxValueChar++;
+		unsigned int nbChar = std::max(nbMinValueChar, nbMaxValueChar);
+		if (m_precision > 0)
+			nbChar += m_precision + 1;
+
+		return { (nbChar + 1) * s_charWidth * m_characterSize , s_textHeight * m_characterSize };
 	}
 
 
