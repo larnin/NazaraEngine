@@ -45,18 +45,27 @@ namespace Ndk
 	{
 		m_minValue = min;
 		m_maxValue = max;
+
+		CheckValueBounds();
+
 		Layout();
 	}
 
 	void SliderWidget::SetMinValue(float min)
 	{
 		m_minValue = min;
+
+		CheckValueBounds();
+
 		Layout();
 	}
 
 	void SliderWidget::SetMaxValue(float max)
 	{
 		m_maxValue = max;
+
+		CheckValueBounds();
+
 		Layout();
 	}
 
@@ -68,10 +77,12 @@ namespace Ndk
 
 	void SliderWidget::SetValue(float value)
 	{
-		value = std::max(value, m_minValue);
-		value = std::min(value, m_maxValue);
-
 		m_value = value;
+
+		CheckValueBounds();
+
+		OnValueChanged(this);
+
 		UpdateText();
 		Layout();
 	}
@@ -106,6 +117,16 @@ namespace Ndk
 		UpdateText();
 		UpdateSize();
 		Layout();
+	}
+
+	void SliderWidget::CheckValueBounds()
+	{
+		float min = std::min(m_minValue, m_maxValue);
+		float max = std::max(m_minValue, m_maxValue);
+		if (m_value < min)
+			SetValue(min);
+		else if (m_value > max)
+			SetValue(max);
 	}
 
 	Nz::Vector2f SliderWidget::GetCursorSize() const

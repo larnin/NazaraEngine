@@ -21,6 +21,12 @@ namespace Ndk
 		SliderOrientation_Vertical
 	};
 
+	enum ScrollBarOrientation
+	{
+		ScrollBarOrientation_Horizontal,
+		ScrollBarOrientation_Vertical
+	};
+
 	enum CheckboxState
 	{
 		CheckboxState_Checked,

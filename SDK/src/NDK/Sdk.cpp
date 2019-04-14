@@ -40,6 +40,7 @@
 #include <NDK/Systems/RenderSystem.hpp>
 #include <NDK/Widgets/CheckboxWidget.hpp>
 #include <NDK/Widgets/RadioButtonWidget.hpp>
+#include <NDK/Widgets/ScrollBarWidget.hpp>
 #endif
 
 namespace Ndk
@@ -134,6 +135,12 @@ namespace Ndk
 				NazaraError("Failed to initialize Radio button Widget");
 				return false;
 			}
+
+			if (!ScrollBarWidget::Initialize())
+			{
+				NazaraError("Failed to initialize Scroll bar Widget");
+				return false;
+			}
 			#endif
 
 			NazaraNotice("Initialized: SDK");
@@ -191,6 +198,7 @@ namespace Ndk
 		// Widgets
 		CheckboxWidget::Uninitialize();
 		RadioButtonWidget::Uninitialize();
+		ScrollBarWidget::Uninitialize();
 		#endif
 
 		NazaraNotice("Uninitialized: SDK");

@@ -11,6 +11,8 @@
 #include <Nazara/Graphics/Sprite.hpp>
 #include <Nazara/Graphics/TextSprite.hpp>
 
+#include <algorithm>
+
 namespace Ndk
 {
 	class NDK_API SliderWidget : public BaseWidget
@@ -50,9 +52,11 @@ namespace Ndk
 		SliderWidget& operator=(const SliderWidget&) = delete;
 		SliderWidget& operator=(SliderWidget&&) = default;
 
-		NazaraSignal(OnStateChanged, const SliderWidget* /*slider*/);
+		NazaraSignal(OnValueChanged, const SliderWidget* /*slider*/);
 
 	private:
+		inline void CheckValueBounds();
+
 		void Layout() override;
 		void UpdateSize();
 		void UpdateText();
