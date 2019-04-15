@@ -72,6 +72,8 @@ namespace Ndk
 			inline float GetWidth() const;
 			inline std::size_t GetWidgetChildCount() const;
 
+			inline Nz::Rectf GetInheritBounds() const;
+
 			bool HasFocus() const;
 
 			inline bool IsVisible() const;

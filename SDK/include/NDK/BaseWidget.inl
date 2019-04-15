@@ -255,4 +255,27 @@ namespace Ndk
 	{
 		m_canvasIndex = index;
 	}
+
+	inline Nz::Rectf BaseWidget::GetInheritBounds() const
+	{
+		Nz::Vector2f minPos = Nz::Vector2f(GetPosition());
+		Nz::Vector2f maxPos = minPos + GetSize();
+
+		if (GetParent() == nullptr)
+			return Nz::Rectf(minPos, maxPos);
+
+		Nz::Rectf parentBounds = m_widgetParent->GetInheritBounds();
+
+		minPos.x = std::max(parentBounds.x, minPos.x);
+		minPos.y = std::max(parentBounds.y, minPos.y);
+		maxPos.x = std::min(parentBounds.x + parentBounds.width, maxPos.x);
+		maxPos.y = std::min(parentBounds.y + parentBounds.height, maxPos.y);
+
+		if (minPos.x > maxPos.x)
+			maxPos.x = minPos.x;
+		if (minPos.y > maxPos.y)
+			maxPos.y = minPos.y;
+
+		return Nz::Rectf(minPos, maxPos);
+	}
 }

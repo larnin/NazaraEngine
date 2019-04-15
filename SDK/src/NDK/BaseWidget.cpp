@@ -286,10 +286,7 @@ namespace Ndk
 		if (IsRegisteredToCanvas())
 			m_canvas->NotifyWidgetBoxUpdate(m_canvasIndex);
 
-		Nz::Vector2f widgetPos = Nz::Vector2f(GetPosition());
-		Nz::Vector2f widgetSize = GetSize();
-
-		Nz::Recti fullBounds(Nz::Rectf(widgetPos.x, widgetPos.y, widgetSize.x, widgetSize.y));
+		Nz::Recti fullBounds(GetInheritBounds());
 		for (WidgetEntity& widgetEntity : m_entities)
 		{
 			const Ndk::EntityHandle& entity = widgetEntity.handle;
