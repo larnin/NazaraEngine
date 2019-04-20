@@ -85,7 +85,7 @@ namespace Ndk
 			m_backgroundEntity->AddComponent<GraphicsComponent>().Attach(m_backgroundSprite, -1);
 			m_backgroundEntity->AddComponent<NodeComponent>().SetParent(this);
 
-			BaseWidget::Layout(); // Only layout background
+			BaseWidget::OnLayout(); // Only layout background
 		}
 		else
 		{
@@ -112,6 +112,9 @@ namespace Ndk
 		Nz::Vector2f newSize = size;
 		newSize.Maximize(m_minimumSize);
 		newSize.Minimize(m_maximumSize);
+
+		if (m_size == newSize)
+			return;
 
 		NotifyParentResized(newSize);
 		m_size = newSize;
@@ -185,10 +188,24 @@ namespace Ndk
 
 	void BaseWidget::Layout()
 	{
+		OnLayout();
+
 		if (m_backgroundEntity)
 			m_backgroundSprite->SetSize(m_size.x, m_size.y);
 
 		UpdatePositionAndSize();
+
+		if (m_widgetParent != nullptr && !m_bUpdatedToParent)
+		{
+			//disallow to layout the parent a second time and creating a black hole
+			m_bUpdatedToParent = true;
+			m_widgetParent->Layout();
+			m_bUpdatedToParent = false;
+		}
+	}
+
+	void BaseWidget::OnLayout()
+	{
 	}
 
 	void BaseWidget::InvalidateNode()
@@ -258,6 +275,8 @@ namespace Ndk
 		NazaraAssert(it != m_children.end(), "Child widget not found in parent");
 
 		m_children.erase(it);
+
+		Layout();
 	}
 
 	void BaseWidget::DestroyChildren()

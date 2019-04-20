@@ -74,8 +74,10 @@ namespace Ndk
 	}
 
 
-	void ProgressBarWidget::Layout()
+	void ProgressBarWidget::OnLayout()
 	{
+		BaseWidget::OnLayout();
+
 		Nz::Vector2f size = GetSize();
 		Nz::Vector2f progressBarSize = size;
 

@@ -62,7 +62,7 @@ namespace Ndk
 			NazaraSignal(OnButtonTrigger, const ButtonWidget* /*button*/);
 
 		private:
-			void Layout() override;
+			void OnLayout() override;
 
 			void OnMouseEnter() override;
 			void OnMouseButtonPress(int x, int y, Nz::Mouse::Button button) override;

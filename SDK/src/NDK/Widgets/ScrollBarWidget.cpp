@@ -71,9 +71,9 @@ namespace Ndk
 		Nz::TextureLibrary::Unregister("Ndk::ScrollBarWidget::scrollbarbutton");
 	}
 
-	void ScrollBarWidget::Layout()
+	void ScrollBarWidget::OnLayout()
 	{
-		BaseWidget::Layout();
+		BaseWidget::OnLayout();
 
 		Nz::Vector2f size = GetSize();
 

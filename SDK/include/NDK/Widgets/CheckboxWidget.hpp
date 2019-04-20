@@ -65,7 +65,7 @@ namespace Ndk
 			static bool Initialize();
 			static void Uninitialize();
 
-			void Layout() override;
+			void OnLayout() override;
 			void UpdateCheckbox();
 			void UpdateSize();
 

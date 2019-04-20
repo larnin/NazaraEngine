@@ -104,7 +104,8 @@ namespace Ndk
 		protected:
 			const EntityHandle& CreateEntity();
 			void DestroyEntity(Entity* entity);
-			virtual void Layout();
+			void Layout();
+			virtual void OnLayout();
 
 			void InvalidateNode() override;
 
@@ -120,6 +121,7 @@ namespace Ndk
 			virtual void OnMouseExit();
 			virtual void OnParentResized(const Nz::Vector2f& newSize);
 			virtual void OnTextEntered(char32_t character, bool repeated);
+
 
 			inline void SetPreferredSize(const Nz::Vector2f& preferredSize);
 
@@ -157,6 +159,7 @@ namespace Ndk
 			Nz::Vector2f m_size;
 			BaseWidget* m_widgetParent;
 			bool m_visible;
+			bool m_bUpdatedToParent;
 	};
 }
 

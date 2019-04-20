@@ -57,7 +57,7 @@ namespace Ndk
 	private:
 		inline void CheckValueBounds();
 
-		void Layout() override;
+		void OnLayout() override;
 		void UpdateSize();
 		void UpdateText();
 

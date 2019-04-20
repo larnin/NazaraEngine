@@ -39,7 +39,7 @@ namespace Ndk
 			ImageWidget& operator=(ImageWidget&&) = default;
 
 		private:
-			void Layout() override;
+			void OnLayout() override;
 
 			Ndk::EntityHandle m_entity;
 			Nz::SpriteRef m_sprite;

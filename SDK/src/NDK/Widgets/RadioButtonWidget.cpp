@@ -100,9 +100,9 @@ namespace Ndk
 		Nz::TextureLibrary::Unregister("Ndk::RadioButtonWidget::radioFill");
 	}
 
-	void RadioButtonWidget::Layout()
+	void RadioButtonWidget::OnLayout()
 	{
-		BaseWidget::Layout();
+		BaseWidget::OnLayout();
 
 		Nz::Vector2f radioButtonSize = GetRadioButtonSize();
 

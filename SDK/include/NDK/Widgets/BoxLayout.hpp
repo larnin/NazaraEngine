@@ -24,13 +24,10 @@ namespace Ndk
 
 			inline float GetSpacing() const;
 
-			void Layout() override;
-
 			BoxLayout& operator=(const BoxLayout&) = delete;
 			BoxLayout& operator=(BoxLayout&&) = default;
 
 			inline void SetSpacing(float spacing);
-
 
 		private:
 			struct ChildInfo
@@ -39,8 +36,11 @@ namespace Ndk
 				bool isConstrained;
 				float maximumSize;
 				float minimumSize;
+				float preferedSize;
 				float size;
 			};
+
+			void OnLayout() override;
 
 			std::vector<ChildInfo> m_childInfos;
 			BoxLayoutOrientation m_orientation;

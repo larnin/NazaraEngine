@@ -70,7 +70,7 @@ namespace Ndk
 			NazaraSignal(OnValueChanged, const ProgressBarWidget* /*progressBar*/);
 
 		private:
-			void Layout() override;
+			void OnLayout() override;
 			inline void UpdateText();
 
 

@@ -19,9 +19,9 @@ namespace Ndk
 		gfx.Attach(m_sprite);
 	}
 
-	void ImageWidget::Layout()
+	void ImageWidget::OnLayout()
 	{
-		BaseWidget::Layout();
+		BaseWidget::OnLayout();
 
 		m_sprite->SetSize(GetSize());
 	}

@@ -18,7 +18,8 @@ namespace Ndk
 	m_minimumSize(0.f),
 	m_preferredSize(-1),
 	m_widgetParent(nullptr),
-	m_visible(true)
+	m_visible(true),
+	m_bUpdatedToParent(false)
 	{
 	}
 
@@ -34,9 +35,16 @@ namespace Ndk
 
 	inline void BaseWidget::AddChild(std::unique_ptr<BaseWidget>&& widget)
 	{
+		BaseWidget * widgetParent = widget->m_widgetParent;
+
 		widget->Show(m_visible);
 		widget->SetParent(this);
 		m_children.emplace_back(std::move(widget));
+
+		if (widgetParent != nullptr)
+			widgetParent->Layout();
+
+		Layout();
 	}
 
 	inline void BaseWidget::Center()
@@ -237,7 +245,7 @@ namespace Ndk
 	{
 		m_preferredSize = preferredSize;
 
-		Resize(m_preferredSize);
+		Layout();
 	}
 
 	inline bool BaseWidget::IsRegisteredToCanvas() const

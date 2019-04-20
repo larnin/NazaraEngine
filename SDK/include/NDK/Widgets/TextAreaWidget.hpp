@@ -90,7 +90,7 @@ namespace Ndk
 			NazaraSignal(OnTextChanged, const TextAreaWidget* /*textArea*/, const Nz::String& /*text*/);
 
 		private:
-			void Layout() override;
+			void OnLayout() override;
 
 			bool IsFocusable() const override;
 			void OnFocusLost() override;

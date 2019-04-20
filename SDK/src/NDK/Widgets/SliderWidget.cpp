@@ -53,9 +53,9 @@ namespace Ndk
 		Layout();  
 	}
 
-	void SliderWidget::Layout()
+	void SliderWidget::OnLayout()
 	{
-		BaseWidget::Layout();
+		BaseWidget::OnLayout();
 
 		Nz::Vector2f cursorSize = GetCursorSize();
 		Nz::Vector2f textSize = GetTextSize();

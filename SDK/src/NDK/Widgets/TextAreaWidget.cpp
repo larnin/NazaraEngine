@@ -182,9 +182,9 @@ namespace Ndk
 		}
 	}
 
-	void TextAreaWidget::Layout()
+	void TextAreaWidget::OnLayout()
 	{
-		BaseWidget::Layout();
+		BaseWidget::OnLayout();
 
 		RefreshCursor();
 	}

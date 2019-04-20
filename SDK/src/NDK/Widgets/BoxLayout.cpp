@@ -9,8 +9,10 @@
 
 namespace Ndk
 {
-	void BoxLayout::Layout()
+	void BoxLayout::OnLayout()
 	{
+		BaseWidget::OnLayout();
+
 		std::size_t axis1, axis2;
 
 		switch (m_orientation)
@@ -43,6 +45,7 @@ namespace Ndk
 			info.isConstrained = false;
 			info.maximumSize = child->GetMaximumSize()[axis1];
 			info.minimumSize = child->GetMinimumSize()[axis1];
+			info.preferedSize = child->GetPreferredSize()[axis1];
 			info.size = info.minimumSize;
 			info.widget = child;
 		});
@@ -119,5 +122,14 @@ namespace Ndk
 
 			cursor += info.size;
 		};
+
+		Nz::Vector2f preferedSize{ 0, 0 };
+
+		for (const ChildInfo & info : m_childInfos)
+			preferedSize[axis1] += info.preferedSize;
+		if (!m_childInfos.empty())
+			preferedSize[axis1] += m_spacing * (m_childInfos.size() - 1);
+		preferedSize[axis2] = GetPreferredSize()[axis2];
+		SetPreferredSize(preferedSize);
 	}
 }

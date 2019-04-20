@@ -73,9 +73,9 @@ namespace Ndk
 		return s_pressCornerColor;
 	}
 
-	void ButtonWidget::Layout()
+	void ButtonWidget::OnLayout()
 	{
-		BaseWidget::Layout();
+		BaseWidget::OnLayout();
 
 		Nz::Vector2f size = GetSize();
 		m_gradientSprite->SetSize(size);

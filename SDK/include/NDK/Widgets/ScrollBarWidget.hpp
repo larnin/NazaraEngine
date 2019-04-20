@@ -55,7 +55,7 @@ namespace Ndk
 
 		inline void CheckValueBounds();
 
-		void Layout() override;
+		void OnLayout() override;
 		void UpdateRotation();
 
 		inline Nz::Vector2f GetButtonSize() const;

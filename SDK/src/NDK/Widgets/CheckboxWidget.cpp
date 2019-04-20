@@ -108,9 +108,9 @@ namespace Ndk
 		return m_state;
 	}
 
-	void CheckboxWidget::Layout()
+	void CheckboxWidget::OnLayout()
 	{
-		BaseWidget::Layout();
+		BaseWidget::OnLayout();
 
 		Nz::Vector2f checkboxSize = GetCheckboxSize();
 		Nz::Vector2f borderSize = GetCheckboxBorderSize();
