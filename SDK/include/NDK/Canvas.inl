@@ -60,8 +60,9 @@ namespace Ndk
 
 		Nz::Vector3f pos = entry.widget->GetPosition();
 		Nz::Vector2f size = entry.widget->GetSize();
+		Nz::Vector2f scale(entry.widget->GetScale());
 
-		entry.box.Set(pos.x, pos.y, pos.z, size.x, size.y, 1.f);
+		entry.box.Set(pos.x, pos.y, pos.z, size.x * scale.x, size.y * scale.y, 1.f);
 	}
 
 	inline void Canvas::NotifyWidgetCursorUpdate(std::size_t index)

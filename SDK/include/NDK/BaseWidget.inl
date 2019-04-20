@@ -244,8 +244,6 @@ namespace Ndk
 	inline void BaseWidget::SetPreferredSize(const Nz::Vector2f& preferredSize)
 	{
 		m_preferredSize = preferredSize;
-
-		Layout();
 	}
 
 	inline bool BaseWidget::IsRegisteredToCanvas() const
@@ -266,8 +264,11 @@ namespace Ndk
 
 	inline Nz::Rectf BaseWidget::GetInheritBounds() const
 	{
+		Nz::Vector2f scale = Nz::Vector2f(GetScale()); 
+
 		Nz::Vector2f minPos = Nz::Vector2f(GetPosition());
-		Nz::Vector2f maxPos = minPos + GetSize();
+		Nz::Vector2f maxPos = minPos + GetSize() * scale; 
+
 
 		if (GetParent() == nullptr)
 			return Nz::Rectf(minPos, maxPos);

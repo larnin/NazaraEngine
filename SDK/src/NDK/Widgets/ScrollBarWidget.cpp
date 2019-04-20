@@ -207,6 +207,8 @@ namespace Ndk
 		m_topButtonSprite->SetColor(s_buttonBaseColor);
 		m_bottomButtonSprite->SetColor(s_buttonBaseColor);
 		m_CursorSprite->SetColor(s_cursorColor);
+
+		m_pressedButton = PressedButton::none;
 	}
 
 	ScrollBarWidget::PressedButton ScrollBarWidget::GetButton(Nz::Vector2f pos)

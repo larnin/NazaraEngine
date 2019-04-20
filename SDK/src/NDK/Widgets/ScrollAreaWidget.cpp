@@ -3,6 +3,8 @@
 
 namespace Ndk
 {
+	float ScrollAreaWidget::s_BarMargin{ 5 };
+
 	ScrollAreaWidget::ScrollAreaWidget(BaseWidget* parent) :
 	BaseWidget{ parent },
 	m_verticalBar{ nullptr },
@@ -42,14 +44,15 @@ namespace Ndk
 		Nz::Vector2f areaSize = size;
 
 		if (m_verticalBar != nullptr)
-			areaSize.x -= m_verticalBar->GetWidth();
+			areaSize.x -= m_verticalBar->GetWidth() + s_BarMargin;
 
 		if (m_horizontalBar != nullptr)
-			areaSize.y -= m_horizontalBar->GetHeight();
+			areaSize.y -= m_horizontalBar->GetHeight() + s_BarMargin;
 
 		m_parentAreaWidget->Resize(areaSize);
 
-		Nz::Vector2f areaPreferedSize = m_areaWidget->GetPreferredSize();
+		Nz::Vector2f areaScale(Nz::Vector2f(m_areaWidget->GetScale(Nz::CoordSys_Local)));
+		Nz::Vector2f areaPreferedSize = m_areaWidget->GetPreferredSize() * areaScale;
 		if (areaPreferedSize.x < areaSize.x)
 			areaPreferedSize.x = areaSize.x;
 		if (areaPreferedSize.y < areaSize.y)
@@ -62,7 +65,7 @@ namespace Ndk
 
 			Nz::Vector2f barSize = m_horizontalBar->GetSize();
 			m_horizontalBar->Resize(Nz::Vector2f(areaSize.x, barSize.y));
-			m_horizontalBar->SetPosition(0, areaSize.y);
+			m_horizontalBar->SetPosition(0, areaSize.y + s_BarMargin);
 		}
 
 		if (m_verticalBar != nullptr)
@@ -72,10 +75,10 @@ namespace Ndk
 
 			Nz::Vector2f barSize = m_verticalBar->GetSize();
 			m_verticalBar->Resize(Nz::Vector2f(barSize.x, areaSize.y));
-			m_verticalBar->SetPosition(areaSize.x, 0);
+			m_verticalBar->SetPosition(areaSize.x + s_BarMargin, 0);
 		}
 
-		m_areaWidget->Resize(areaPreferedSize);
+		m_areaWidget->Resize(areaPreferedSize / areaScale);
 		m_areaWidget->SetPosition(-m_offset);
 	}
 

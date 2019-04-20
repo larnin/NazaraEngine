@@ -43,6 +43,8 @@ namespace Ndk
 		ScrollBarWidget* m_horizontalBar;
 
 		Nz::Vector2f m_offset;
+
+		static float s_BarMargin;
 	};
 }
 

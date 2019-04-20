@@ -54,8 +54,10 @@ namespace Ndk
 		{
 			WidgetEntry& hoveredWidget = m_widgetEntries[m_hoveredWidget];
 
-			int x = static_cast<int>(std::round(event.x - hoveredWidget.box.x));
-			int y = static_cast<int>(std::round(event.y - hoveredWidget.box.y));
+			Nz::Vector2f scale(hoveredWidget.widget->GetScale());
+
+			int x = static_cast<int>(std::round(event.x - hoveredWidget.box.x) / scale.x);
+			int y = static_cast<int>(std::round(event.y - hoveredWidget.box.y) / scale.y);
 
 			hoveredWidget.widget->OnMouseButtonPress(x, y, event.button);
 		}
@@ -67,8 +69,10 @@ namespace Ndk
 		{
 			WidgetEntry& hoveredWidget = m_widgetEntries[m_hoveredWidget];
 
-			int x = static_cast<int>(std::round(event.x - hoveredWidget.box.x));
-			int y = static_cast<int>(std::round(event.y - hoveredWidget.box.y));
+			Nz::Vector2f scale(hoveredWidget.widget->GetScale());
+
+			int x = static_cast<int>(std::round(event.x - hoveredWidget.box.x) / scale.x);
+			int y = static_cast<int>(std::round(event.y - hoveredWidget.box.y) / scale.y); 
 
 			hoveredWidget.widget->OnMouseButtonRelease(x, y, event.button);
 		}
@@ -113,9 +117,10 @@ namespace Ndk
 			}
 
 			WidgetEntry& hoveredWidget = m_widgetEntries[m_hoveredWidget];
+			Nz::Vector2f scale(hoveredWidget.widget->GetScale());
 
-			int x = static_cast<int>(std::round(event.x - hoveredWidget.box.x));
-			int y = static_cast<int>(std::round(event.y - hoveredWidget.box.y));
+			int x = static_cast<int>(std::round(event.x - hoveredWidget.box.x) / scale.x);
+			int y = static_cast<int>(std::round(event.y - hoveredWidget.box.y) / scale.y);
 			hoveredWidget.widget->OnMouseMoved(x, y, event.deltaX, event.deltaY);
 		}
 		else if (m_hoveredWidget != InvalidCanvasIndex)

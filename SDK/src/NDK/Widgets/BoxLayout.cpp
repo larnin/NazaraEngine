@@ -40,12 +40,14 @@ namespace Ndk
 			if (!child->IsVisible())
 				return;
 
+			Nz::Vector2f scale(child->GetScale(Nz::CoordSys_Local));
+
 			m_childInfos.emplace_back();
 			auto& info = m_childInfos.back();
 			info.isConstrained = false;
-			info.maximumSize = child->GetMaximumSize()[axis1];
-			info.minimumSize = child->GetMinimumSize()[axis1];
-			info.preferedSize = child->GetPreferredSize()[axis1];
+			info.maximumSize = child->GetMaximumSize()[axis1] * scale[axis1];
+			info.minimumSize = child->GetMinimumSize()[axis1] * scale[axis1];
+			info.preferedSize = child->GetPreferredSize()[axis1] * scale[axis1];
 			info.size = info.minimumSize;
 			info.widget = child;
 		});
@@ -98,9 +100,10 @@ namespace Ndk
 
 		for (auto& info : m_childInfos)
 		{
+			Nz::Vector2f scale(info.widget->GetScale(Nz::CoordSys_Local));
 			Nz::Vector2f newSize = info.widget->GetSize();
-			newSize[axis1] = info.size;
-			newSize[axis2] = layoutSize[axis2];
+			newSize[axis1] = info.size / scale[axis1];
+			newSize[axis2] = layoutSize[axis2] / scale[axis2];
 
 			info.widget->Resize(newSize);
 		}

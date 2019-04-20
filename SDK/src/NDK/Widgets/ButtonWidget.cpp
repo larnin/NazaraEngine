@@ -80,8 +80,10 @@ namespace Ndk
 		Nz::Vector2f size = GetSize();
 		m_gradientSprite->SetSize(size);
 
-		Nz::Boxf textBox = m_textEntity->GetComponent<GraphicsComponent>().GetAABB();
-		m_textEntity->GetComponent<NodeComponent>().SetPosition(size.x / 2.f - textBox.width / 2.f, size.y / 2.f - textBox.height / 2.f);
+		Nz::Vector2f scale(GetScale());
+		
+		Nz::Vector2f textSize(m_textSprite->GetBoundingVolume().obb.localBox.GetLengths());
+		m_textEntity->GetComponent<NodeComponent>().SetPosition((size - textSize) / 2.0f);
 	}
 
 	void ButtonWidget::OnMouseButtonPress(int /*x*/, int /*y*/, Nz::Mouse::Button button)
