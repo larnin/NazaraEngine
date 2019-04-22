@@ -45,7 +45,6 @@ namespace Ndk
 		m_cursorEntity->AddComponent<Ndk::GraphicsComponent>().Attach(m_CursorSprite);
 
 		SetOrientation(m_orientation);
-		Layout();
 	}
 
 	bool ScrollBarWidget::Initialize()
