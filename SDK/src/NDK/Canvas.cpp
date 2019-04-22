@@ -50,6 +50,8 @@ namespace Ndk
 
 	void Canvas::OnEventMouseButtonPressed(const Nz::EventHandler* /*eventHandler*/, const Nz::WindowEvent::MouseButtonEvent& event)
 	{
+		SetKeyboardOwner(InvalidCanvasIndex);
+
 		if (m_hoveredWidget != InvalidCanvasIndex)
 		{
 			WidgetEntry& hoveredWidget = m_widgetEntries[m_hoveredWidget];

@@ -88,6 +88,7 @@ namespace Ndk
 			NazaraSignal(OnTextAreaKeyRight, const TextAreaWidget* /*textArea*/, bool* /*ignoreDefaultAction*/);
 			NazaraSignal(OnTextAreaKeyUp, const TextAreaWidget* /*textArea*/, bool* /*ignoreDefaultAction*/);
 			NazaraSignal(OnTextChanged, const TextAreaWidget* /*textArea*/, const Nz::String& /*text*/);
+			NazaraSignal(OnEditingFinished, const TextAreaWidget* /*textArea*/, const Nz::String& /*text*/);
 
 		private:
 			void OnLayout() override;

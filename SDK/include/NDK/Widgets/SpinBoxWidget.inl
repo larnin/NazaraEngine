@@ -77,6 +77,9 @@ namespace Ndk
 	{
 		m_precision = precision;
 
+		//update value text
+		SetValue(m_value);
+
 		OnLayout();
 	}
 

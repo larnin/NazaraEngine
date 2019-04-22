@@ -39,7 +39,7 @@ namespace Ndk
 
 		m_textArea = Add<TextAreaWidget>();
 		m_textArea->SetCharacterFilter([](const auto & c) {return c == '-' || c == '.' || (c >= '0' && c <= '9'); }); //only numbers
-		m_textArea->OnTextChanged.Connect([this](const Ndk::TextAreaWidget*, const Nz::String & text) {OnTextChanged(text.ToStdString()); });
+		m_textArea->OnEditingFinished.Connect([this](const Ndk::TextAreaWidget*, const Nz::String & text) {OnTextChanged(text.ToStdString()); });
 		SetValue(m_value);
 	}
 
@@ -75,8 +75,16 @@ namespace Ndk
 		if (m_blockTextChangeSignal)
 			return;
 
-		float value = std::stof(text);
-		SetValue(value);
+		try
+		{
+			float value = std::stof(text);
+			SetValue(value);
+		}
+		catch (const std::exception &)
+		{
+			SetValue(m_value);
+		}
+
 	}
 
 	void SpinBoxWidget::SetValue(float value)

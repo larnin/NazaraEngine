@@ -196,6 +196,8 @@ namespace Ndk
 
 	void TextAreaWidget::OnFocusLost()
 	{
+		OnEditingFinished(this, m_text);
+
 		m_cursorEntity->Disable();
 	}
 
@@ -499,6 +501,9 @@ namespace Ndk
 			{
 				bool ignoreDefaultAction = false;
 				OnTextAreaKeyReturn(this, &ignoreDefaultAction);
+
+				if (!ignoreDefaultAction && !m_multiLineEnabled)
+					OnEditingFinished(this, m_text);
 
 				if (ignoreDefaultAction || !m_multiLineEnabled)
 					break;
