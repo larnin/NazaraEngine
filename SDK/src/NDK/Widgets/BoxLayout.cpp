@@ -134,5 +134,6 @@ namespace Ndk
 			preferedSize[axis1] += m_spacing * (m_childInfos.size() - 1);
 		preferedSize[axis2] = GetPreferredSize()[axis2];
 		SetPreferredSize(preferedSize);
+		SetMinimumSize(preferedSize);
 	}
 }

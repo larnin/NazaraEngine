@@ -39,8 +39,6 @@ namespace Ndk
 		m_textEntity = CreateEntity();
 		m_textEntity->AddComponent<NodeComponent>().SetParent(this);
 		m_textEntity->AddComponent<GraphicsComponent>().Attach(m_textSprite, 1);
-
-		Layout();
 	}
 
 	const Nz::Color& ButtonWidget::GetDefaultColor()
