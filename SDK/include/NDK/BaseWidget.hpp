@@ -75,8 +75,7 @@ namespace Ndk
 			bool HasFocus() const;
 
 			inline bool IsVisible() const;
-
-			void Resize(const Nz::Vector2f& size);
+			inline bool IsVisibleInHierarchy() const;
 
 			void SetBackgroundColor(const Nz::Color& color);
 			void SetCursor(Nz::SystemCursor systemCursor);
@@ -96,6 +95,8 @@ namespace Ndk
 
 			void Show(bool show = true);
 
+			virtual void Update(float elapsedTime);
+
 			BaseWidget& operator=(const BaseWidget&) = delete;
 			BaseWidget& operator=(BaseWidget&&) = delete;
 
@@ -104,8 +105,12 @@ namespace Ndk
 			void DestroyEntity(Entity* entity);
 			virtual void Layout();
 
+			inline void Resize(BaseWidget & widget, const Nz::Vector2f& size);
+			virtual void Resize(const Nz::Vector2f& size);
+
 			void InvalidateNode() override;
 
+			virtual int GetRenderOrderIndex() const;
 			virtual bool IsFocusable() const;
 			virtual void OnFocusLost();
 			virtual void OnFocusReceived();
@@ -116,10 +121,10 @@ namespace Ndk
 			virtual void OnMouseButtonPress(int x, int y, Nz::Mouse::Button button);
 			virtual void OnMouseButtonRelease(int x, int y, Nz::Mouse::Button button);
 			virtual void OnMouseExit();
-			virtual void OnParentResized(const Nz::Vector2f& newSize);
 			virtual void OnTextEntered(char32_t character, bool repeated);
 
 			inline void SetPreferredSize(const Nz::Vector2f& preferredSize);
+			inline void SetSize(const Nz::Vector2f& size);
 
 		private:
 			inline BaseWidget();
@@ -127,11 +132,13 @@ namespace Ndk
 			void DestroyChild(BaseWidget* widget);
 			void DestroyChildren();
 			inline bool IsRegisteredToCanvas() const;
-			inline void NotifyParentResized(const Nz::Vector2f& newSize);
 			void RegisterToCanvas();
 			inline void UpdateCanvasIndex(std::size_t index);
 			void UnregisterFromCanvas();
 			void UpdatePositionAndSize();
+			void SetVisibleInHerarchy(bool visible);
+
+			void ChildResized();
 
 			struct WidgetEntity
 			{
@@ -155,6 +162,7 @@ namespace Ndk
 			Nz::Vector2f m_size;
 			BaseWidget* m_widgetParent;
 			bool m_visible;
+			bool m_visibleInHierarchy;
 	};
 }
 

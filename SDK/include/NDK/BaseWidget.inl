@@ -165,6 +165,11 @@ namespace Ndk
 		return m_visible;
 	}
 
+	inline bool BaseWidget::IsVisibleInHierarchy() const
+	{
+		return m_visibleInHierarchy;
+	}
+
 	inline void BaseWidget::SetFixedHeight(float fixedHeight)
 	{
 		SetMaximumHeight(fixedHeight);
@@ -197,7 +202,7 @@ namespace Ndk
 
 		Nz::Vector2f size = GetSize();
 		if (size.x > m_maximumSize.x || size.y > m_maximumSize.y)
-			Resize(size); //< Will clamp automatically
+			ChildResized(); //< Will clamp automatically
 	}
 
 	inline void BaseWidget::SetMaximumWidth(float maximumWidth)
@@ -222,7 +227,7 @@ namespace Ndk
 
 		Nz::Vector2f size = GetSize();
 		if (size.x < m_minimumSize.x || size.y < m_minimumSize.y)
-			Resize(size); //< Will clamp automatically
+			ChildResized(); //< Will clamp automatically
 	}
 
 	inline void BaseWidget::SetMinimumWidth(float minimumWidth)
@@ -237,18 +242,22 @@ namespace Ndk
 	{
 		m_preferredSize = preferredSize;
 
-		Resize(m_preferredSize);
+		ChildResized();
+	}
+
+	inline void BaseWidget::SetSize(const Nz::Vector2f& size)
+	{
+		m_size = size;
+	}
+
+	inline void BaseWidget::Resize(BaseWidget & widget, const Nz::Vector2f& size)
+	{
+		widget.Resize(size);
 	}
 
 	inline bool BaseWidget::IsRegisteredToCanvas() const
 	{
 		return m_canvas && m_canvasIndex != InvalidCanvasIndex;
-	}
-
-	inline void BaseWidget::NotifyParentResized(const Nz::Vector2f& newSize)
-	{
-		for (const auto& widgetPtr : m_children)
-			widgetPtr->OnParentResized(newSize);
 	}
 
 	inline void BaseWidget::UpdateCanvasIndex(std::size_t index)

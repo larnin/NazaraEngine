@@ -28,6 +28,8 @@ namespace Ndk
 
 			inline const WorldHandle& GetWorld() const;
 
+			void Update(float elapsedTime) override;
+
 			Canvas& operator=(const Canvas&) = delete;
 			Canvas& operator=(Canvas&&) = delete;
 

@@ -204,4 +204,12 @@ namespace Ndk
 		if (m_keyboardOwner != InvalidCanvasIndex)
 			m_widgetEntries[m_keyboardOwner].widget->OnTextEntered(event.character, event.repeated);
 	}
+
+	void Canvas::Update(float elapsedTime)
+	{
+		for (auto & entry : m_widgetEntries)
+		{
+			entry.widget->Update(elapsedTime);
+		}
+	}
 }

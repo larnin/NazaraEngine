@@ -22,10 +22,11 @@ namespace Ndk
 			BoxLayout(BoxLayout&&) = default;
 			~BoxLayout() = default;
 
-			void Layout() override;
-
 			BoxLayout& operator=(const BoxLayout&) = delete;
 			BoxLayout& operator=(BoxLayout&&) = default;
+
+	protected:
+		void Resize(const Nz::Vector2f& size) override;
 
 		private:
 			struct ChildInfo

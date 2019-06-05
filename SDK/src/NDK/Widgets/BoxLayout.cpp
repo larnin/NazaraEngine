@@ -9,25 +9,33 @@
 
 namespace Ndk
 {
-	void BoxLayout::Layout()
+	void BoxLayout::Resize(const Nz::Vector2f& size)
 	{
+		Nz::Vector2f newSize = size;
+		newSize.Maximize(GetMinimumSize());
+		newSize.Minimize(GetMaximumSize());
+
+		SetSize(newSize);
+
+		Layout();
+
 		std::size_t axis1, axis2;
 
 		switch (m_orientation)
 		{
-			case BoxLayoutOrientation_Horizontal:
-				axis1 = 0; //< x
-				axis2 = 1; //< y
-				break;
+		case BoxLayoutOrientation_Horizontal:
+			axis1 = 0; //< x
+			axis2 = 1; //< y
+			break;
 
-			case BoxLayoutOrientation_Vertical:
-				axis1 = 1; //< y
-				axis2 = 0; //< x
-				break;
+		case BoxLayoutOrientation_Vertical:
+			axis1 = 1; //< y
+			axis2 = 0; //< x
+			break;
 
-			default:
-				assert(false);
-				break;
+		default:
+			assert(false);
+			break;
 		}
 
 		m_childInfos.clear();
@@ -98,7 +106,7 @@ namespace Ndk
 			Nz::Vector2f newSize = info.widget->GetSize();
 			newSize[axis1] = info.size;
 
-			info.widget->Resize(newSize);
+			BaseWidget::Resize(*info.widget, newSize);
 		}
 
 		// Handle position

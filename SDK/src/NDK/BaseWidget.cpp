@@ -113,10 +113,12 @@ namespace Ndk
 		newSize.Maximize(m_minimumSize);
 		newSize.Minimize(m_maximumSize);
 
-		NotifyParentResized(newSize);
 		m_size = newSize;
 
 		Layout();
+
+		for (auto & child : m_children)
+			child->Resize(child->m_preferredSize);
 	}
 
 	void BaseWidget::SetBackgroundColor(const Nz::Color& color)
@@ -150,6 +152,9 @@ namespace Ndk
 		{
 			m_visible = show;
 
+			if (!m_visibleInHierarchy)
+				return;
+
 			if (m_visible)
 				RegisterToCanvas();
 			else
@@ -159,7 +164,29 @@ namespace Ndk
 				entity.handle->Enable(show);
 
 			for (const auto& widgetPtr : m_children)
-				widgetPtr->Show(show);
+				widgetPtr->SetVisibleInHerarchy(show);
+		}
+	}
+
+	void BaseWidget::SetVisibleInHerarchy(bool visible)
+	{
+		if (visible != m_visibleInHierarchy)
+		{
+			m_visibleInHierarchy = visible;
+
+			if (!m_visible)
+				return;
+
+			if (m_visibleInHierarchy)
+				RegisterToCanvas();
+			else
+				UnregisterFromCanvas();
+
+			for (WidgetEntity& entity : m_entities)
+				entity.handle->Enable(visible);
+
+			for (const auto& widgetPtr : m_children)
+				widgetPtr->SetVisibleInHerarchy(visible);
 		}
 	}
 
@@ -196,6 +223,13 @@ namespace Ndk
 		Node::InvalidateNode();
 
 		UpdatePositionAndSize();
+	}
+
+	int BaseWidget::GetRenderOrderIndex() const
+	{
+		if (m_widgetParent != nullptr)
+			return m_widgetParent->GetRenderOrderIndex();
+		return 0;
 	}
 
 	bool BaseWidget::IsFocusable() const
@@ -237,10 +271,6 @@ namespace Ndk
 	}
 
 	void BaseWidget::OnMouseExit()
-	{
-	}
-
-	void BaseWidget::OnParentResized(const Nz::Vector2f& /*newSize*/)
 	{
 	}
 
@@ -296,5 +326,17 @@ namespace Ndk
 			if (entity->HasComponent<GraphicsComponent>())
 				entity->GetComponent<GraphicsComponent>().SetScissorRect(fullBounds);
 		}
+	}
+
+	void BaseWidget::Update(float elapsedTime)
+	{
+
+	}
+
+	void BaseWidget::ChildResized()
+	{
+		if(m_widgetParent == nullptr)
+			Resize(m_preferredSize);
+		else m_widgetParent->ChildResized();
 	}
 }
