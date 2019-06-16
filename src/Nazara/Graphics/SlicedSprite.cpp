@@ -123,6 +123,25 @@ namespace Nz
 		float leftSize = m_leftMargin * width;
 		float rightSize = m_rightMargin * width;
 
+		bool topDown = false;
+		bool leftRight = false;
+
+		if (topSize + downSize > m_size.y)
+		{
+			float ratio = m_size.y / (topSize + downSize);
+			topSize *= ratio;
+			downSize *= ratio;
+			topDown = true;
+		}
+
+		if (leftSize + rightSize > m_size.x)
+		{
+			float ratio = m_size.x / (leftSize + rightSize);
+			leftSize *= ratio;
+			rightSize *= ratio;
+			leftRight = true;
+		}
+
 		Vector3f origin(m_origin.x, -m_origin.y, m_origin.z);
 
 		for(unsigned int i = 0 ; i < 4 * m_nbQuads ; i++)
@@ -147,7 +166,7 @@ namespace Nz
 			*posPtr++ = instanceData->transformMatrix.Transform(leftSize * Vector3f::Right() + topSize * Vector3f::Down() - origin);
 			*texCoordPtr++ = topLeft + Vector2f(m_leftMargin, m_topMargin);
 		}
-		if (m_leftMargin > 0 && topSize + downSize < m_size.y)
+		if (m_leftMargin > 0 && !topDown)
 		{
 			*posPtr++ = instanceData->transformMatrix.Transform(topSize * Vector3f::Down() - origin);
 			*texCoordPtr++ = topLeft + Vector2f(0, m_topMargin);
@@ -165,7 +184,7 @@ namespace Nz
 		if (m_leftMargin > 0 && m_downMargin > 0)
 		{
 			*posPtr++ = instanceData->transformMatrix.Transform((m_size.y - downSize) * Vector3f::Down() - origin);
-			*texCoordPtr++ = *texCoordPtr++ = downLeft + Vector2f(0, -m_downMargin);
+			*texCoordPtr++ = downLeft + Vector2f(0, -m_downMargin);
 
 			*posPtr++ = instanceData->transformMatrix.Transform(leftSize * Vector3f::Right() + (m_size.y - downSize) * Vector3f::Down() - origin);
 			*texCoordPtr++ = downLeft + Vector2f(m_leftMargin, -m_downMargin);
@@ -176,7 +195,7 @@ namespace Nz
 			*posPtr++ = instanceData->transformMatrix.Transform(leftSize * Vector3f::Right() + m_size.y * Vector3f::Down() - origin);
 			*texCoordPtr++ = downLeft + Vector2f(m_leftMargin, 0);
 		}
-		if (m_downMargin > 0 && leftSize + rightSize < m_size.x)
+		if (m_downMargin > 0 && !leftRight)
 		{
 			*posPtr++ = instanceData->transformMatrix.Transform(leftSize * Vector3f::Right() + (m_size.y - downSize) * Vector3f::Down() - origin);
 			*texCoordPtr++ = downLeft + Vector2f(m_leftMargin, -m_downMargin);
@@ -204,7 +223,7 @@ namespace Nz
 			*posPtr++ = instanceData->transformMatrix.Transform(m_size.x  * Vector3f::Right() + m_size.y * Vector3f::Down() - origin);
 			*texCoordPtr++ = downRight;
 		}
-		if (m_rightMargin > 0 && topSize + downSize < m_size.y)
+		if (m_rightMargin > 0 && !topDown)
 		{
 			*posPtr++ = instanceData->transformMatrix.Transform((m_size.x - rightSize) * Vector3f::Right() + topSize * Vector3f::Down() - origin);
 			*texCoordPtr++ = topRight + Vector2f(-m_rightMargin, m_topMargin);
@@ -213,10 +232,10 @@ namespace Nz
 			*texCoordPtr++ = topRight + Vector2f(0, m_topMargin);
 
 			*posPtr++ = instanceData->transformMatrix.Transform((m_size.x - rightSize) * Vector3f::Right() + (m_size.y - downSize) * Vector3f::Down() - origin);
-			*texCoordPtr++ = downRight + Vector2f(-m_rightMargin, m_downMargin);
+			*texCoordPtr++ = downRight + Vector2f(-m_rightMargin, -m_downMargin);
 
 			*posPtr++ = instanceData->transformMatrix.Transform(m_size.x * Vector3f::Right() + (m_size.y - downSize) * Vector3f::Down() - origin);
-			*texCoordPtr++ = downRight + Vector2f(0, m_downMargin);
+			*texCoordPtr++ = downRight + Vector2f(0, -m_downMargin);
 		}
 		if (m_rightMargin > 0 && m_topMargin > 0)
 		{
@@ -232,7 +251,7 @@ namespace Nz
 			*posPtr++ = instanceData->transformMatrix.Transform(m_size.x * Vector3f::Right() + topSize * Vector3f::Down() - origin);
 			*texCoordPtr++ = topRight + Vector2f(0, m_topMargin);
 		}
-		if (m_topMargin > 0 && leftSize + rightSize < m_size.x)
+		if (m_topMargin > 0 && !leftRight)
 		{
 			*posPtr++ = instanceData->transformMatrix.Transform(leftSize * Vector3f::Right() - origin);
 			*texCoordPtr++ = topLeft + Vector2f(m_leftMargin, 0);
@@ -247,7 +266,7 @@ namespace Nz
 			*texCoordPtr++ = topRight + Vector2f(-m_rightMargin, m_topMargin);
 		}
 
-		if (leftSize + rightSize < m_size.x && m_rightMargin > 0 && topSize + downSize < m_size.y)
+		if (!topDown && !leftRight)
 		{
 			*posPtr++ = instanceData->transformMatrix.Transform(leftSize * Vector3f::Right() + topSize * Vector3f::Down() - origin);
 			*texCoordPtr++ = topLeft + Vector2f(m_leftMargin, m_topMargin);
