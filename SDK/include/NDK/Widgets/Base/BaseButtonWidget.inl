@@ -10,7 +10,7 @@ namespace Ndk
 
 	inline bool BaseButtonWidget::IsChecked() const
 	{
-		return m_checkState == CheckboxState_Unchecked;
+		return m_checkState == CheckboxState_Checked;
 	}
 
 	inline bool BaseButtonWidget::IsPressed() const

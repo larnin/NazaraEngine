@@ -24,6 +24,34 @@ namespace Ndk
 		CheckboxState_Max = CheckboxState_Unchecked
 	};
 
+	enum ButtonState
+	{
+		ButtonState_Idle,
+		ButtonState_Hovered,
+		ButtonState_Pressed,
+		ButtonState_PressedHovered,
+		ButtonState_Disabled,
+
+		ButtonState_Max = ButtonState_Disabled,
+
+		ButtonState_All
+	};
+
+	enum ButtonTextAlignment
+	{
+		ButtonTextAlignment_TopLeft,
+		ButtonTextAlignment_Left,
+		ButtonTextAlignment_DownLeft,
+		ButtonTextAlignment_Down,
+		ButtonTextAlignment_DownRight,
+		ButtonTextAlignment_Right,
+		ButtonTextAlignment_TopRight,
+		ButtonTextAlignment_Top,
+		ButtonTextAlignment_Centred,
+
+		ButtonTextAlignment_Max,
+	};
+
 	enum EchoMode
 	{
 		EchoMode_Normal,

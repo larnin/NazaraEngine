@@ -18,7 +18,10 @@ namespace Ndk
 	m_minimumSize(0.f),
 	m_preferredSize(-1),
 	m_widgetParent(nullptr),
-	m_visible(true)
+	m_visible(true),
+	m_visibleInHierarchy(true),
+	m_enabled(true),
+	m_enabledInHierarchy(true)
 	{
 	}
 
@@ -168,6 +171,16 @@ namespace Ndk
 	inline bool BaseWidget::IsVisibleInHierarchy() const
 	{
 		return m_visibleInHierarchy;
+	}
+
+	inline bool BaseWidget::IsEnabled() const
+	{
+		return m_enabled;
+	}
+
+	inline bool BaseWidget::IsEnabledInHierarchy() const
+	{
+		return m_enabledInHierarchy;
 	}
 
 	inline void BaseWidget::SetFixedHeight(float fixedHeight)

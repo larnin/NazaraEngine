@@ -190,6 +190,34 @@ namespace Ndk
 		}
 	}
 
+	void BaseWidget::SetEnabled(bool enabled)
+	{
+		if (m_enabled != enabled)
+		{
+			m_enabled = enabled;
+
+			if (!m_enabledInHierarchy)
+				return;
+
+			for (const auto& widgetPtr : m_children)
+				widgetPtr->SetEnabledInHerarchy(enabled);
+		}
+	}
+
+	void BaseWidget::SetEnabledInHerarchy(bool enabled)
+	{
+		if (enabled != m_enabledInHierarchy)
+		{
+			m_enabledInHierarchy = enabled;
+
+			if (!m_enabled)
+				return;
+
+			for (const auto& widgetPtr : m_children)
+				widgetPtr->SetEnabledInHerarchy(enabled);
+		}
+	}
+
 	const Ndk::EntityHandle& BaseWidget::CreateEntity()
 	{
 		const EntityHandle& newEntity = m_world->CreateEntity();

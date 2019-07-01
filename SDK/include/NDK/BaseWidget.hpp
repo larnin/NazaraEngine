@@ -77,9 +77,14 @@ namespace Ndk
 			inline bool IsVisible() const;
 			inline bool IsVisibleInHierarchy() const;
 
+			inline bool IsEnabled() const;
+			inline bool IsEnabledInHierarchy() const;
+
 			void SetBackgroundColor(const Nz::Color& color);
 			void SetCursor(Nz::SystemCursor systemCursor);
 			void SetFocus();
+
+			void SetEnabled(bool enabled = true);
 
 			inline void SetFixedHeight(float fixedHeight);
 			inline void SetFixedSize(const Nz::Vector2f& fixedSize);
@@ -137,6 +142,7 @@ namespace Ndk
 			void UnregisterFromCanvas();
 			void UpdatePositionAndSize();
 			void SetVisibleInHerarchy(bool visible);
+			void SetEnabledInHerarchy(bool enabled);
 
 			void ChildResized();
 
@@ -163,6 +169,8 @@ namespace Ndk
 			BaseWidget* m_widgetParent;
 			bool m_visible;
 			bool m_visibleInHierarchy;
+			bool m_enabled;
+			bool m_enabledInHierarchy;
 	};
 }
 
