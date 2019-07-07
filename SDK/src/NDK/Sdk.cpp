@@ -41,6 +41,7 @@
 #include <NDK/Systems/ListenerSystem.hpp>
 #include <NDK/Systems/RenderSystem.hpp>
 #include <NDK/Widgets/CheckboxWidget.hpp>
+#include <NDK/Widgets/Simple/SimpleButtonWidget.hpp>
 #endif
 
 namespace Ndk
@@ -131,6 +132,12 @@ namespace Ndk
 				NazaraError("Failed to initialize Checkbox Widget");
 				return false;
 			}
+
+			if (!SimpleButtonWidget::Initialize())
+			{
+				NazaraError("Failled to initialize Simple Button Widget");
+				return false;
+			}
 			#endif
 
 			NazaraNotice("Initialized: SDK");
@@ -187,6 +194,7 @@ namespace Ndk
 		#ifndef NDK_SERVER
 		// Widgets
 		CheckboxWidget::Uninitialize();
+		SimpleButtonWidget::Uninitialize();
 		#endif
 
 		NazaraNotice("Uninitialized: SDK");
