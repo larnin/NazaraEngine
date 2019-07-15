@@ -16,14 +16,16 @@ namespace Ndk
 		: BaseButtonWidget(parent)
 		, m_textAlignment{ButtonTextAlignment_Centred}
 		, m_textPosition{ButtonTextAlignment_Centred}
-		, m_textMargin{0}
+		, m_textMargin{16}
 		, m_hovered{false}
 		, m_currentButtonState{ButtonState_Idle}
 	{
 		int parentRenderOrderIndex = BaseWidget::GetRenderOrderIndex();
 
 		m_buttonSprite = Nz::SlicedSprite::New();
-		m_buttonSprite->SetMaterial(Nz::Material::New("Basic2D"));
+		Nz::MaterialRef mat = Nz::Material::New("Translucent2D");
+		mat->GetDiffuseSampler().SetAnisotropyLevel(10);
+		m_buttonSprite->SetMaterial(mat);
 
 		m_buttonEntity = CreateEntity();
 		m_buttonEntity->AddComponent<NodeComponent>().SetParent(this);
@@ -46,7 +48,7 @@ namespace Ndk
 
 	void TexturedButtonWidget::Layout()
 	{
-		m_textEntity->GetComponent<NodeComponent>().SetPosition(GetTextPos());
+		BaseButtonWidget::Layout();
 
 		m_buttonEntity->GetComponent<NodeComponent>().SetPosition(GetButtonPos());
 
@@ -60,6 +62,8 @@ namespace Ndk
 		else if (m_textPosition == ButtonTextAlignment_Top || m_textPosition == ButtonTextAlignment_Down)
 			SetButtonSize(size - Nz::Vector2f(0, textBox.height + m_textMargin));
 		else SetButtonSize(size - Nz::Vector2f(textBox.width + m_textMargin, textBox.height + m_textMargin));
+
+		m_textEntity->GetComponent<NodeComponent>().SetPosition(GetTextPos());
 
 		m_currentButtonState = ButtonState_Idle;
 
@@ -97,7 +101,7 @@ namespace Ndk
 
 		OnMouseMoved(x, y, 0, 0);
 
-		if (button == Nz::Mouse::Left)
+		if (button == Nz::Mouse::Left && m_hovered)
 		{
 			SetPressed(true, true);
 			Layout();
@@ -134,10 +138,10 @@ namespace Ndk
 			m_currentButtonState = ButtonState_Disabled;
 		else
 		{
-			if (m_hovered)
-				m_currentButtonState = ButtonState_Hovered;
-			else if (IsPressed())
+			if (IsPressed())
 				m_currentButtonState = ButtonState_Pressed;
+			else if (m_hovered)
+				m_currentButtonState = ButtonState_Hovered;
 
 			if (IsChecked())
 			{
@@ -176,19 +180,13 @@ namespace Ndk
 
 	Nz::Vector2f TexturedButtonWidget::GetTextPos() const
 	{
-		Nz::Boxf textBox = m_textEntity->GetComponent<GraphicsComponent>().GetAABB();
 		Nz::Vector2f buttonSize = GetButtonSize();
-
-		if (m_textPosition == ButtonTextAlignment_Left || m_textPosition == ButtonTextAlignment_TopLeft || m_textPosition == ButtonTextAlignment_DownLeft
-			|| m_textPosition == ButtonTextAlignment_Top || m_textPosition == ButtonTextAlignment_TopLeft || m_textPosition == ButtonTextAlignment_TopRight)
-			return GetTextAlignmentOffset();
-
 		Nz::Vector2f textPos = Nz::Vector2f::Zero();
 
 		if (m_textPosition == ButtonTextAlignment_DownLeft || m_textPosition == ButtonTextAlignment_Down || m_textPosition == ButtonTextAlignment_DownRight)
 			textPos.y += buttonSize.y + m_textMargin;
 		if (m_textPosition == ButtonTextAlignment_TopRight || m_textPosition == ButtonTextAlignment_Right || m_textPosition == ButtonTextAlignment_DownRight)
-			textPos.x += buttonSize.y + m_textMargin;
+			textPos.x += buttonSize.x + m_textMargin;
 
 		return textPos + GetTextAlignmentOffset();
 	}
