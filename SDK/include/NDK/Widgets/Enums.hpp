@@ -21,7 +21,9 @@ namespace Ndk
 		CheckboxState_Tristate,
 		CheckboxState_Unchecked,
 
-		CheckboxState_Max = CheckboxState_Unchecked
+		CheckboxState_Max = CheckboxState_Unchecked,
+
+		CheckboxState_All
 	};
 
 	enum ButtonState

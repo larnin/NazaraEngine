@@ -15,6 +15,7 @@ namespace Ndk
 {
 	class NDK_API TexturedButtonWidget : public BaseButtonWidget
 	{
+	protected:
 		struct ButtonInfo
 		{
 			Nz::TextureRef texture;
@@ -35,7 +36,7 @@ namespace Ndk
 		inline void SetSliceMargin(float top, float down, float left, float right);
 		inline void SetSliceMargin(unsigned int top, unsigned int down, unsigned int left, unsigned int right);
 
-		virtual int GetRenderOrderIndex() const;
+		int GetRenderOrderIndex() const override;
 
 		inline Nz::TextureRef GetTexture(ButtonState state) const;
 		inline Nz::Rectf GetTextureCoord(ButtonState state) const;
@@ -61,10 +62,10 @@ namespace Ndk
 		Nz::Vector2f GetTextPos() const;
 		Nz::Vector2f GetTextAlignmentOffset() const;
 		Nz::Vector2f GetButtonPos() const;
-
-		virtual void Layout();
 		inline void SetButtonSize(Nz::Vector2f size, bool keepAspectRatio = false);
 		Nz::Rectf GetButtonRect() const;
+
+		virtual void Layout() override;
 
 	private:
 		void OnMouseMoved(int x, int y, int deltaX, int deltaY) override;

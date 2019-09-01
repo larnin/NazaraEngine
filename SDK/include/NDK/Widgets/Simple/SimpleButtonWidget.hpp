@@ -5,8 +5,6 @@
 
 #include <Ndk/Widgets/Base/TexturedButtonWidget.hpp>
 
-#include <array>
-
 namespace Ndk
 {
 	class NDK_API SimpleButtonWidget : public TexturedButtonWidget
@@ -15,7 +13,7 @@ namespace Ndk
 
 	public:
 		SimpleButtonWidget(BaseWidget* parent);
-		SimpleButtonWidget(const TexturedButtonWidget&) = delete;
+		SimpleButtonWidget(const SimpleButtonWidget&) = delete;
 		SimpleButtonWidget(SimpleButtonWidget&&) = default;
 		virtual ~SimpleButtonWidget() = default;
 

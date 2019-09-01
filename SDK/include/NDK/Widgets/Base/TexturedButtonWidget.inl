@@ -1,5 +1,3 @@
-#pragma once
-
 #include <NDK/Widgets/Base/TexturedButtonWidget.hpp>
 
 namespace Ndk
