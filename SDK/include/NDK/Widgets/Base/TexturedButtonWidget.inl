@@ -48,6 +48,11 @@ namespace Ndk
 		return m_buttonsDatas[state].color;
 	}
 
+	inline bool TexturedButtonWidget::HasKeepTextureRatio() const
+	{
+		return m_keepTextureRatio;
+	}
+
 	inline void TexturedButtonWidget::SetTexture(Nz::TextureRef texture, ButtonState state)
 	{
 		if (state == ButtonState::ButtonState_All)
@@ -163,6 +168,13 @@ namespace Ndk
 		UpdateSize();
 	}
 
+	inline void TexturedButtonWidget::SetKeepTextureRatio(bool keepRatio)
+	{
+		m_keepTextureRatio = keepRatio;
+
+		UpdateSize();
+	}
+
 	inline ButtonTextAlignment TexturedButtonWidget::GetTextAlignment() const
 	{
 		return m_textAlignment;
@@ -183,14 +195,14 @@ namespace Ndk
 		return m_buttonSprite->GetSize();
 	}
 
-	inline void TexturedButtonWidget::SetButtonSize(Nz::Vector2f size, bool keepAspectRatio)
+	inline void TexturedButtonWidget::SetButtonSize(Nz::Vector2f size)
 	{
-		if (keepAspectRatio)
+		if (m_keepTextureRatio)
 		{
 			Nz::Vector2f oldSize = m_buttonSprite->GetSize();
 			float ratio = oldSize.x / oldSize.y;
 			float newRatio = size.x / size.y;
-			if (newRatio > ratio)
+			if (newRatio < ratio)
 				size.y = oldSize.y / oldSize.x * size.x;
 			else size.x = oldSize.x / oldSize.y * size.y;
 		}

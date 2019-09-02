@@ -45,6 +45,7 @@ namespace Ndk
 		inline ButtonTextAlignment GetTextAlignment() const;
 		inline ButtonTextAlignment GetTextPosition() const;
 		inline float GetTextMargin() const;
+		inline bool HasKeepTextureRatio() const;
 
 		inline bool IsButtonHovered() const;
 
@@ -55,6 +56,7 @@ namespace Ndk
 		inline void SetTextAlignment(ButtonTextAlignment alignment);
 		inline void SetTextPosition(ButtonTextAlignment position);
 		inline void SetTextMargin(float margin);
+		inline void SetKeepTextureRatio(bool keepRatio);
 
 		inline void UpdateText(const Nz::AbstractTextDrawer& drawer);
 
@@ -62,7 +64,7 @@ namespace Ndk
 		Nz::Vector2f GetTextPos() const;
 		Nz::Vector2f GetTextAlignmentOffset() const;
 		Nz::Vector2f GetButtonPos() const;
-		inline void SetButtonSize(Nz::Vector2f size, bool keepAspectRatio = false);
+		inline void SetButtonSize(Nz::Vector2f size);
 		Nz::Rectf GetButtonRect() const;
 
 		virtual void Layout() override;
@@ -79,6 +81,7 @@ namespace Ndk
 		EntityHandle m_buttonEntity;
 		Nz::SlicedSpriteRef m_buttonSprite;
 		std::array<ButtonInfo, ButtonState_Max + 1> m_buttonsDatas;
+		bool m_keepTextureRatio;
 
 		EntityHandle m_textEntity;
 		Nz::TextSpriteRef m_textSprite;

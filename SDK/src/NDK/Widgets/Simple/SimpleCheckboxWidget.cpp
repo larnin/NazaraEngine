@@ -24,6 +24,7 @@ namespace Ndk
 
 		SetCheckable(true);
 		SetTextPosition(Ndk::ButtonTextAlignment_Right);
+		SetKeepTextureRatio(true);
 
 		m_checkSprite = Nz::Sprite::New(Nz::Material::New("Translucent2D"));
 
