@@ -25,12 +25,14 @@ namespace Ndk
 			inline bool IsChecked() const;
 			inline bool IsPressed() const;
 			inline bool IsTristateEnabled() const;
+			inline bool IsRadioButton() const;
 
 			inline CheckboxState GetCheckState() const;
 
 			inline void SetCheckable(bool checkable);
 			inline void SetChecked(bool checked);
 			inline void SetCheckState(CheckboxState state);
+			inline void EnableRadioButton(bool enabled);
 
 			NazaraSignal(OnPress);
 			NazaraSignal(OnRelease);
@@ -47,6 +49,7 @@ namespace Ndk
 			CheckboxState m_checkState;
 			bool m_tristateEnabled;
 			bool m_pressed;
+			bool m_radioButton;
 	};
 
 }

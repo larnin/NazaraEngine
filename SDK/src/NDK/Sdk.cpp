@@ -43,6 +43,7 @@
 #include <NDK/Widgets/CheckboxWidget.hpp>
 #include <NDK/Widgets/Simple/SimpleButtonWidget.hpp>
 #include <NDK/Widgets/Simple/SimpleCheckboxWidget.hpp>
+#include <NDK/Widgets/Simple/SimpleRadioButtonWidget.hpp>
 #endif
 
 namespace Ndk
@@ -145,6 +146,12 @@ namespace Ndk
 				NazaraError("Failled to initialize Simple Checkbox Widget");
 				return false;
 			}
+
+			if (!SimpleRadioButtonWidget::Initialize())
+			{
+				NazaraError("Failled to initialize Simple Radio Button Widget");
+				return false;
+			}
 			#endif
 
 			NazaraNotice("Initialized: SDK");
@@ -203,6 +210,7 @@ namespace Ndk
 		CheckboxWidget::Uninitialize();
 		SimpleButtonWidget::Uninitialize();
 		SimpleCheckboxWidget::Uninitialize();
+		SimpleRadioButtonWidget::Uninitialize();
 		#endif
 
 		NazaraNotice("Uninitialized: SDK");

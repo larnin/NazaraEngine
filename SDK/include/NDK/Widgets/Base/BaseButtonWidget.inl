@@ -23,6 +23,12 @@ namespace Ndk
 		return m_tristateEnabled;
 	}
 
+
+	inline bool BaseButtonWidget::IsRadioButton() const
+	{
+		return m_radioButton;
+	}
+
 	inline CheckboxState BaseButtonWidget::GetCheckState() const
 	{
 		return m_checkState;
@@ -39,22 +45,9 @@ namespace Ndk
 
 	inline void BaseButtonWidget::SetChecked(bool checked)
 	{
-		if (!m_checkable)
-			return;
-
-		CheckboxState oldState = m_checkState;
-
-		if(checked)
-			m_checkState = CheckboxState_Checked;
-		else m_checkState = CheckboxState_Unchecked;
-
-		if (oldState == m_checkState)
-			return;
-
-		Layout();
-
-		OnToggle(m_checkState == CheckboxState_Checked);
-		OnCheckStateChange(m_checkState);
+		if (checked)
+			SetCheckState(CheckboxState_Checked);
+		else SetCheckState(CheckboxState_Unchecked);
 	}
 
 	inline void BaseButtonWidget::SetCheckState(CheckboxState state)
@@ -67,7 +60,7 @@ namespace Ndk
 
 		m_checkState = state;
 
-		if(oldState != m_checkState)
+		if(oldState == m_checkState)
 			return;
 
 		Layout();
@@ -77,10 +70,50 @@ namespace Ndk
 		if (wasChecked != checked)
 			OnToggle(checked);
 		OnCheckStateChange(m_checkState);
+
+		if (checked && m_radioButton)
+		{
+			auto parent = GetParent();
+			if (parent == nullptr)
+				return;
+
+			for (auto & child : parent->GetChilds())
+			{
+				if (child == this)
+					continue;
+
+				//not that good but there are no easy clean solution for this particular case
+				auto button = dynamic_cast<BaseButtonWidget*>(child);
+				if (button == nullptr)
+					continue;
+
+				if (!button->IsRadioButton())
+					continue;
+				button->SetChecked(false);
+			}
+		}
+	}
+
+	inline void  BaseButtonWidget::EnableRadioButton(bool enabled)
+	{
+		if (!enabled && m_radioButton)
+			SetCheckable(false);
+
+		m_radioButton = enabled;
+		if (m_radioButton)
+		{
+			SetChecked(false);
+			SetCheckable(true);
+		}
+
+		Layout();
 	}
 
 	inline void BaseButtonWidget::CheckNextState()
 	{
+		if (m_radioButton && m_checkState != CheckboxState_Unchecked)
+			return;
+
 		switch (m_checkState)
 		{
 		case CheckboxState_Unchecked:

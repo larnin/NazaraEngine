@@ -13,7 +13,7 @@ namespace Ndk
 
 	public:
 		SimpleCheckboxWidget(BaseWidget* parent);
-		SimpleCheckboxWidget(const TexturedButtonWidget&) = delete;
+		SimpleCheckboxWidget(const SimpleCheckboxWidget&) = delete;
 		SimpleCheckboxWidget(SimpleCheckboxWidget&&) = default;
 		virtual ~SimpleCheckboxWidget() = default;
 
