@@ -54,6 +54,12 @@ namespace Ndk
 		ButtonTextAlignment_Max,
 	};
 
+	enum SliderOrientation
+	{
+		SliderOrientation_Horizontal,
+		SliderOrientation_Vertical
+	};
+
 	enum EchoMode
 	{
 		EchoMode_Normal,
