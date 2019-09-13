@@ -57,7 +57,9 @@ namespace Ndk
 	enum SliderOrientation
 	{
 		SliderOrientation_Horizontal,
-		SliderOrientation_Vertical
+		SliderOrientation_Vertical,
+
+		SliderOrientation_Max = SliderOrientation_Vertical
 	};
 
 	enum EchoMode

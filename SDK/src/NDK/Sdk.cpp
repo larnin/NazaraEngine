@@ -44,6 +44,7 @@
 #include <NDK/Widgets/Simple/SimpleButtonWidget.hpp>
 #include <NDK/Widgets/Simple/SimpleCheckboxWidget.hpp>
 #include <NDK/Widgets/Simple/SimpleRadioButtonWidget.hpp>
+#include <NDK/Widgets/Simple/SimpleSliderWidget.hpp>
 #endif
 
 namespace Ndk
@@ -152,6 +153,12 @@ namespace Ndk
 				NazaraError("Failled to initialize Simple Radio Button Widget");
 				return false;
 			}
+
+			if (!SimpleSliderWidget::Initialize())
+			{
+				NazaraError("Failled to initialize Simple Slider Widget");
+				return false;
+			}
 			#endif
 
 			NazaraNotice("Initialized: SDK");
@@ -211,6 +218,7 @@ namespace Ndk
 		SimpleButtonWidget::Uninitialize();
 		SimpleCheckboxWidget::Uninitialize();
 		SimpleRadioButtonWidget::Uninitialize();
+		SimpleSliderWidget::Uninitialize();
 		#endif
 
 		NazaraNotice("Uninitialized: SDK");

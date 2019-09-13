@@ -14,6 +14,12 @@ namespace Ndk
 	SimpleCheckboxWidget::SimpleCheckboxWidget(BaseWidget* parent)
 		: TexturedButtonWidget(parent)
 	{
+		m_checkSprite = Nz::Sprite::New(Nz::Material::New("Translucent2D"));
+
+		m_checkEntity = CreateEntity();
+		m_checkEntity->AddComponent<NodeComponent>().SetParent(this);
+		m_checkEntity->AddComponent<GraphicsComponent>().Attach(m_checkSprite, TexturedButtonWidget::GetRenderOrderIndex() + 1);
+
 		SetTexture(Nz::TextureLibrary::Get(s_buttonIdleName)); //idle texture on all state
 		SetTexture(Nz::TextureLibrary::Get(s_buttonHoveredName), Ndk::ButtonState_Hovered);
 		SetTexture(Nz::TextureLibrary::Get(s_buttonHoveredName), Ndk::ButtonState_PressedHovered);
@@ -25,12 +31,6 @@ namespace Ndk
 		SetCheckable(true);
 		SetTextPosition(Ndk::ButtonTextAlignment_Right);
 		SetKeepTextureRatio(true);
-
-		m_checkSprite = Nz::Sprite::New(Nz::Material::New("Translucent2D"));
-
-		m_checkEntity = CreateEntity();
-		m_checkEntity->AddComponent<NodeComponent>().SetParent(this);
-		m_checkEntity->AddComponent<GraphicsComponent>().Attach(m_checkSprite, TexturedButtonWidget::GetRenderOrderIndex() + 1);
 
 		Layout();
 	}
