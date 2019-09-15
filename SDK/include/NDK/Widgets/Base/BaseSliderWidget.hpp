@@ -31,6 +31,9 @@ namespace Ndk
 		inline float GetNormalizedValue() const;
 		inline SliderOrientation GetOrientation() const;
 
+		NazaraSignal(OnValueChange, float /*value*/);
+		NazaraSignal(OnValueChangeNormalized, float /*value*/);
+
 	protected:
 		BaseSliderWidget(BaseWidget* parent);
 

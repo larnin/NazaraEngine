@@ -132,6 +132,11 @@ namespace Ndk
 		m_backMargin = margin;
 	}
 
+	inline void SimpleSliderWidget::SetMoveSpeed(float speed)
+	{
+		m_moveSpeed = speed;
+	}
+
 	inline Nz::TextureRef SimpleSliderWidget::GetSliderTexture(SliderOrientation orientation, ButtonState state) const
 	{
 		NazaraAssert(state <= ButtonState_Max, "You can't get any texture in that state");
@@ -177,5 +182,57 @@ namespace Ndk
 	inline float SimpleSliderWidget::GetBackgroundMargin() const
 	{
 		return m_backMargin;
+	}
+
+
+	inline float SimpleSliderWidget::GetMoveSpeed() const
+	{
+		return m_moveSpeed;
+	}
+
+	inline bool SimpleSliderWidget::IsPressed() const
+	{
+		return m_pressed;
+	}
+
+	inline bool SimpleSliderWidget::IsBackgroundPressed() const
+	{
+		return m_backgroundPressed;
+	}
+
+
+	inline bool SimpleSliderWidget::IsHovered() const
+	{
+		return m_hovered;
+	}
+
+	inline void SimpleSliderWidget::SetPressed(bool pressed)
+	{
+		if (m_pressed == pressed)
+			return;
+
+		m_pressed = pressed;
+
+		OnPress(pressed);
+	}
+
+	inline void SimpleSliderWidget::SetBackgroundPressed(bool pressed)
+	{
+		if (m_backgroundPressed == pressed)
+			return;
+
+		m_backgroundPressed = pressed;
+
+		OnBackgroundPress(pressed);
+	}
+
+	inline void SimpleSliderWidget::SetHovered(bool hovered)
+	{
+		if (m_hovered == hovered)
+			return;
+
+		m_hovered = hovered;
+
+		OnHover(hovered);
 	}
 }

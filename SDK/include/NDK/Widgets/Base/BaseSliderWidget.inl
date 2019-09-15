@@ -33,12 +33,18 @@ namespace Ndk
 
 	inline void BaseSliderWidget::SetValue(float value, bool ignoreStep)
 	{
+		value = std::max(value, m_min);
+		value = std::min(value, m_max);
+
 		if (!ignoreStep && m_step > 0)
 		{
 			value = std::round(value / m_step) * m_step;
 		}
 
 		m_value = value;
+
+		OnValueChange(m_value);
+		OnValueChangeNormalized((m_value - m_min) / (m_max - m_min));
 
 		Layout();
 	}

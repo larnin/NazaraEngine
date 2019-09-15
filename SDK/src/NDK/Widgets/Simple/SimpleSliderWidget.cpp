@@ -28,6 +28,9 @@ namespace Ndk
 	BaseSliderWidget(parent),
 	m_hovered{false},
 	m_pressed{false},
+	m_backgroundPressed{false},
+	m_pressOffset{0},
+	m_moveSpeed{250},
 	m_backMargin{0}
 	{
 		int parentRenderOrderIndex = BaseWidget::GetRenderOrderIndex();
@@ -51,7 +54,7 @@ namespace Ndk
 
 		SetSliderTexture(Nz::TextureLibrary::Get(s_sliderHorizontalName), SliderOrientation_Horizontal, ButtonState_Idle);
 		SetSliderTexture(Nz::TextureLibrary::Get(s_sliderHorizontalHoveredName), SliderOrientation_Horizontal, ButtonState_Hovered);
-		SetSliderTexture(Nz::TextureLibrary::Get(s_sliderHorizontalDisabledName), SliderOrientation_Horizontal, ButtonState_Pressed);
+		SetSliderTexture(Nz::TextureLibrary::Get(s_sliderHorizontalPressedName), SliderOrientation_Horizontal, ButtonState_Pressed);
 		SetSliderTexture(Nz::TextureLibrary::Get(s_sliderHorizontalDisabledName), SliderOrientation_Horizontal, ButtonState_Disabled);
 
 		SetSliderTexture(Nz::TextureLibrary::Get(s_sliderVerticalName), SliderOrientation_Vertical, ButtonState_Idle);
@@ -366,21 +369,140 @@ namespace Ndk
 
 	void SimpleSliderWidget::OnMouseMoved(int x, int y, int deltaX, int deltaY)
 	{
+		Nz::Vector2f size = GetSize();
+		SliderOrientation orientation = GetOrientation();
 
+		Nz::Rectf buttonRect = GetButtonRect();
+
+		bool hoveredOld = m_hovered;
+		SetHovered(buttonRect.Contains(static_cast<float>(x), static_cast<float>(y)));
+		if (!m_pressed && m_hovered != hoveredOld)
+			Layout();
+
+		if (m_pressed)
+		{
+			float normalizedValue = 0;
+			if (orientation == SliderOrientation_Horizontal)
+				normalizedValue = (x - m_pressOffset) / (size.x - buttonRect.width);
+			else normalizedValue = (y - m_pressOffset) / (size.y - buttonRect.height);
+
+			SetNormalizedValue(normalizedValue);
+		}
+
+		if (m_backgroundPressed)
+		{
+			if (orientation == SliderOrientation_Horizontal)
+				m_pressOffset = x - buttonRect.x - buttonRect.width / 2;
+			else m_pressOffset = y - buttonRect.y - buttonRect.height / 2;
+		}
 	}
 
 	void SimpleSliderWidget::OnMouseButtonPress(int x, int y, Nz::Mouse::Button button)
 	{
+		Nz::Rectf buttonRect = GetButtonRect();
 
+		if (buttonRect.Contains(static_cast<float>(x), static_cast<float>(y)))
+		{
+			SetPressed(true);
+			if (GetOrientation() == SliderOrientation_Horizontal)
+				m_pressOffset = x - buttonRect.x;
+			else m_pressOffset = y - buttonRect.y;
+		}
+		else
+		{
+			SetBackgroundPressed(true);
+
+			if (GetOrientation() == SliderOrientation_Horizontal)
+				m_pressOffset = x - buttonRect.x - buttonRect.width / 2;
+			else m_pressOffset = y - buttonRect.y - buttonRect.height / 2;
+		}
+
+		Layout();
 	}
 
 	void SimpleSliderWidget::OnMouseButtonRelease(int x, int y, Nz::Mouse::Button button)
 	{
+		m_pressOffset = 0;
 
+		SetBackgroundPressed(false);
+		SetPressed(false);
+
+		Layout();
 	}
 
 	void SimpleSliderWidget::OnMouseExit()
 	{
+		m_pressOffset = 0;
 
+		SetBackgroundPressed(false);
+		SetPressed(false);
+		SetHovered(false);
+
+		Layout();
+	}
+
+	void SimpleSliderWidget::Update(float elapsedTime)
+	{
+		if (!m_backgroundPressed)
+			return;
+
+		float distance = elapsedTime * m_moveSpeed;
+		if (distance > std::abs(m_pressOffset))
+			distance = m_pressOffset;
+		else if (m_pressOffset < 0)
+			distance *= -1;
+
+		Nz::Vector2f size = GetSize();
+		SliderOrientation orientation = GetOrientation();
+
+		Nz::Rectf buttonRect = GetButtonRect();
+
+		float value = 0;
+		if (orientation == SliderOrientation_Horizontal)
+			value = (buttonRect.x + distance) / (size.x - buttonRect.width);
+		else value = (buttonRect.y + distance) / (size.y - buttonRect.height);
+
+		m_pressOffset -= distance;
+
+		if (orientation == SliderOrientation_Horizontal && std::abs(m_pressOffset) < buttonRect.width / 2.f)
+			SetHovered(true);
+		if (orientation == SliderOrientation_Vertical && std::abs(m_pressOffset) < buttonRect.height / 2.f)
+			SetHovered(true);
+
+		SetNormalizedValue(value);
+	}
+
+	Nz::Rectf SimpleSliderWidget::GetButtonRect() const
+	{
+		Nz::Vector2f size = GetSize();
+		ButtonState state = GetCurrentState();
+		SliderOrientation orientation = GetOrientation();
+		const TextureInfo &infos = m_sliderDatas[orientation][state];
+
+		Nz::Vector2f sliderSize(32, 32);
+		Nz::Vector2f sliderRenderSize(size);
+
+		if (!infos.texture.IsValid())
+			return sliderRenderSize;
+
+		sliderSize.x = infos.texture->GetWidth() * infos.textureCoords.width;
+		sliderSize.y = infos.texture->GetHeight() * infos.textureCoords.height;
+
+		Nz::Vector2f pos(0, 0);
+
+		if (orientation == SliderOrientation_Horizontal)
+		{
+			sliderRenderSize.y = size.y;
+			sliderRenderSize.x = sliderRenderSize.y / sliderSize.y * sliderSize.x;
+			pos.x = GetNormalizedValue() * (size.x - sliderRenderSize.x);
+		}
+		else
+		{
+			sliderRenderSize.x = size.x;
+			sliderRenderSize.y = sliderRenderSize.x / sliderSize.x * sliderSize.y;
+			pos.y = GetNormalizedValue() * (size.y - sliderRenderSize.y);
+		}
+
+		return Nz::Rectf(pos.x, pos.y, sliderRenderSize.x, sliderRenderSize.y);
 	}
 }

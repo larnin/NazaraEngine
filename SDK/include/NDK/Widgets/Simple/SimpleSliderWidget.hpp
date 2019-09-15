@@ -47,6 +47,8 @@ namespace Ndk
 
 		inline void SetBackgroundMargin(float margin);
 
+		inline void SetMoveSpeed(float speed);
+
 		inline Nz::TextureRef GetSliderTexture(SliderOrientation orientation, ButtonState state) const;
 		inline Nz::Rectf GetSliderTextureCoord(SliderOrientation orientation, ButtonState state) const;
 		inline Nz::Color GetSliderColor(SliderOrientation orientation, ButtonState state) const;
@@ -57,9 +59,23 @@ namespace Ndk
 					
 		inline float GetBackgroundMargin() const;
 
+		inline float GetMoveSpeed() const;
+
+		inline bool IsPressed() const;
+		inline bool IsBackgroundPressed() const;
+		inline bool IsHovered() const;
+
+		NazaraSignal(OnPress, bool /*pressed*/);
+		NazaraSignal(OnBackgroundPress, bool /*pressed*/);
+		NazaraSignal(OnHover, bool /*hovered*/);
+
 	protected:
 		void Layout() override;
 		void UpdatePreferedSize() override;
+
+		inline void SetPressed(bool pressed);
+		inline void SetBackgroundPressed(bool pressed);
+		inline void SetHovered(bool hovered);
 
 	private:
 		ButtonState GetCurrentState() const;
@@ -68,6 +84,9 @@ namespace Ndk
 		void OnMouseButtonPress(int x, int y, Nz::Mouse::Button button) override;
 		void OnMouseButtonRelease(int x, int y, Nz::Mouse::Button button) override;
 		void OnMouseExit() override;
+		void Update(float elapsedTime) override;
+
+		Nz::Rectf GetButtonRect() const;
 
 		static bool Initialize();
 		static void Uninitialize();
@@ -79,6 +98,9 @@ namespace Ndk
 
 		bool m_hovered;
 		bool m_pressed;
+		bool m_backgroundPressed;
+		float m_pressOffset;
+		float m_moveSpeed;
 
 		std::array<std::array<TextureInfo, ButtonState_Max + 1>, SliderOrientation_Max + 1> m_sliderDatas;
 		std::array<TextureInfo, SliderOrientation_Max + 1> m_back;

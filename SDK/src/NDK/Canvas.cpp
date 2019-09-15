@@ -209,7 +209,8 @@ namespace Ndk
 	{
 		for (auto & entry : m_widgetEntries)
 		{
-			entry.widget->Update(elapsedTime);
+			if(entry.widget != this)
+				entry.widget->Update(elapsedTime);
 		}
 	}
 }
