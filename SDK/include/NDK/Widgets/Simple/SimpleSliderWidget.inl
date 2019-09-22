@@ -137,6 +137,66 @@ namespace Ndk
 		m_moveSpeed = speed;
 	}
 
+	inline void SimpleSliderWidget::EnableTextValue(bool enabled)
+	{
+		if (enabled == m_textEnabled)
+			return;
+
+		m_textEnabled = enabled;
+
+		UpdateTextSize();
+	}
+
+	inline void SimpleSliderWidget::SetTextFont(const Nz::FontRef & font)
+	{
+		m_textFont = font;
+
+		UpdateTextSize();
+	}
+
+	inline void SimpleSliderWidget::SetTextCharacterSize(unsigned int size)
+	{
+		m_textStyle = size;
+
+		UpdateTextSize();
+	}
+
+	inline void SimpleSliderWidget::SetTextStyle(Nz::TextStyleFlags style)
+	{
+		m_textStyle = style;
+
+		UpdateTextSize();
+	}
+
+	inline void SimpleSliderWidget::SetTextColor(Nz::Color color)
+	{
+		m_textColor = color;
+
+		Layout();
+	}
+
+	inline void SimpleSliderWidget::SetTextPosition(ButtonTextAlignment alignment)
+	{
+		m_textPosition = alignment;
+
+		UpdateTextSize();
+	}
+
+
+	inline void SimpleSliderWidget::SetTextMagin(float margin)
+	{
+		m_textMargin = margin;
+
+		UpdatePreferedSize();
+	}
+
+	inline void SimpleSliderWidget::SetTextPrecision(unsigned int precision)
+	{
+		m_textPrecision = precision;
+
+		UpdateTextSize();
+	}
+
 	inline Nz::TextureRef SimpleSliderWidget::GetSliderTexture(SliderOrientation orientation, ButtonState state) const
 	{
 		NazaraAssert(state <= ButtonState_Max, "You can't get any texture in that state");
@@ -190,6 +250,47 @@ namespace Ndk
 		return m_moveSpeed;
 	}
 
+	inline bool SimpleSliderWidget::IsTextValueEnabled() const
+	{
+		return m_textEnabled;
+	}
+
+	inline Nz::FontRef SimpleSliderWidget::GetTextFont() const
+	{
+		return m_textFont;
+	}
+
+	inline unsigned int SimpleSliderWidget::GetTextCharacterSize() const
+	{
+		return m_textCharacterSize;
+	}
+
+	inline Nz::TextStyleFlags SimpleSliderWidget::GetTextStyle() const
+	{
+		return m_textStyle;
+	}
+
+	inline Nz::Color SimpleSliderWidget::GetTextColor() const
+	{
+		return m_textColor;
+	}
+
+	inline ButtonTextAlignment SimpleSliderWidget::GetTextPosition() const
+	{
+		return m_textPosition;
+	}
+
+	inline float SimpleSliderWidget::GetTextMargin() const
+	{
+		return m_textMargin;
+	}
+
+
+	inline unsigned int SimpleSliderWidget::GetTextPrecision() const
+	{
+		return m_textPrecision;
+	}
+
 	inline bool SimpleSliderWidget::IsPressed() const
 	{
 		return m_pressed;
@@ -234,5 +335,86 @@ namespace Ndk
 		m_hovered = hovered;
 
 		OnHover(hovered);
+	}
+
+	inline Nz::Vector2f SimpleSliderWidget::GetTextPos() const
+	{
+		Nz::Vector2f size = GetSize();
+
+		Nz::Vector2f pos(0, 0);
+
+		switch (m_textPosition)
+		{
+		case ButtonTextAlignment_Left:
+			pos.y = (size.y - m_textSize.y) / 2.f;
+			break;
+		case ButtonTextAlignment_DownLeft:
+			pos.y = size.y - m_textSize.y;
+			break;
+		case ButtonTextAlignment_Down:
+			pos.x = (size.x - m_textSize.x) / 2.f;
+			pos.y = size.y - m_textSize.y;
+			break;
+		case ButtonTextAlignment_DownRight:
+			pos.x = size.x - m_textSize.x;
+			pos.y = size.y - m_textSize.y;
+			break;
+		case ButtonTextAlignment_Right:
+			pos.x = size.x - m_textSize.x;
+			pos.y = (size.y - m_textSize.y) / 2.f;
+			break;
+		case ButtonTextAlignment_TopRight:
+			pos.x = size.x - m_textSize.x;
+			break;
+		case ButtonTextAlignment_Top:
+			pos.x = (size.x - m_textSize.x) / 2.f;
+			break;
+		case ButtonTextAlignment_Centred:
+			pos.x = (size.x - m_textSize.x) / 2.f;
+			pos.y = (size.y - m_textSize.y) / 2.f;
+			break;
+		case ButtonTextAlignment_TopLeft:
+		default:
+			break;
+		}
+
+		return pos;
+	}
+
+	inline Nz::Vector2f SimpleSliderWidget::GetSliderPos() const
+	{
+		if (!m_textEnabled)
+			return Nz::Vector2f::Zero();
+
+		Nz::Vector2f pos(0, 0);
+
+		if (m_textPosition == ButtonTextAlignment_TopLeft || m_textPosition == ButtonTextAlignment_TopRight || m_textPosition == ButtonTextAlignment_Top)
+			pos.y = m_textMaxSize.y + m_textMargin;
+
+		if (m_textPosition == ButtonTextAlignment_TopLeft || m_textPosition == ButtonTextAlignment_DownLeft || m_textPosition == ButtonTextAlignment_Left)
+			pos.x = m_textMaxSize.x + m_textMargin;
+
+		return pos;
+	}
+
+	inline Nz::Vector2f SimpleSliderWidget::GetSliderSize() const
+	{
+		Nz::Vector2f size = GetSize();
+
+		if (!m_textEnabled)
+			return size;
+
+		if (m_textPosition == ButtonTextAlignment_TopLeft || m_textPosition == ButtonTextAlignment_TopRight || m_textPosition == ButtonTextAlignment_Top
+			|| m_textPosition == ButtonTextAlignment_DownLeft || m_textPosition == ButtonTextAlignment_DownRight || m_textPosition == ButtonTextAlignment_Down)
+			size.y -= m_textMaxSize.y + m_textMargin;
+		if (size.y < 1)
+			size.y = 1;
+		if (m_textPosition == ButtonTextAlignment_TopLeft || m_textPosition == ButtonTextAlignment_DownLeft || m_textPosition == ButtonTextAlignment_Left
+			|| m_textPosition == ButtonTextAlignment_TopRight || m_textPosition == ButtonTextAlignment_DownRight || m_textPosition == ButtonTextAlignment_Right)
+			size.x -= m_textMaxSize.x + m_textMargin;
+		if (size.x < 1)
+			size.x = 1;
+
+		return size;
 	}
 }

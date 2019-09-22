@@ -1,6 +1,9 @@
 #include <NDK/Widgets/Simple/SimpleSliderWidget.hpp>
 #include <NDK/Components/GraphicsComponent.hpp>
 #include <NDK/Components/NodeComponent.hpp>
+#include <Nazara/Utility/SimpleTextDrawer.hpp>
+
+#include <sstream>
 
 namespace Ndk
 {
@@ -31,7 +34,16 @@ namespace Ndk
 	m_backgroundPressed{false},
 	m_pressOffset{0},
 	m_moveSpeed{250},
-	m_backMargin{0}
+	m_backMargin{0},
+	m_textEnabled{true},
+	m_textCharacterSize{15},
+	m_textStyle{Nz::TextStyle_Regular},
+	m_textColor{Nz::Color::White},
+	m_textPosition{ButtonTextAlignment_Right},
+	m_textMargin{5},
+	m_textPrecision{1},
+	m_textMaxSize{0, 0},
+	m_textSize{0, 0}
 	{
 		int parentRenderOrderIndex = BaseWidget::GetRenderOrderIndex();
 
@@ -50,7 +62,11 @@ namespace Ndk
 		m_sliderEntity->AddComponent<NodeComponent>().SetParent(this);
 		m_sliderEntity->AddComponent<GraphicsComponent>().Attach(m_sliderSprite, parentRenderOrderIndex + 2);
 
-		//add text
+		m_textSprite = Nz::TextSprite::New();;
+
+		m_textEntity = CreateEntity();
+		m_textEntity->AddComponent<NodeComponent>().SetParent(this);
+		m_textEntity->AddComponent<GraphicsComponent>().Attach(m_textSprite, parentRenderOrderIndex + 3);
 
 		SetSliderTexture(Nz::TextureLibrary::Get(s_sliderHorizontalName), SliderOrientation_Horizontal, ButtonState_Idle);
 		SetSliderTexture(Nz::TextureLibrary::Get(s_sliderHorizontalHoveredName), SliderOrientation_Horizontal, ButtonState_Hovered);
@@ -69,7 +85,7 @@ namespace Ndk
 
 		SetBackgroundMargin(8.f / GetBackgroundTexture(SliderOrientation_Horizontal, false)->GetWidth());
 
-		Layout();
+		UpdateTextSize();
 	}
 
 	bool SimpleSliderWidget::Initialize()
@@ -259,7 +275,7 @@ namespace Ndk
 	{
 		BaseSliderWidget::Layout();
 
-		Nz::Vector2f size = GetSize();
+		Nz::Vector2f sliderBaseSize = GetSliderSize();
 		ButtonState state = GetCurrentState();
 		SliderOrientation orientation = GetOrientation();
 		
@@ -267,8 +283,10 @@ namespace Ndk
 		TextureInfo & backInfos = IsEnabledInHierarchy() ? m_back[orientation] : m_backDisabled[orientation];
 
 		Nz::Vector2f sliderSize(32, 32);
-		Nz::Vector2f sliderRenderSize(size);
+		Nz::Vector2f sliderRenderSize(sliderBaseSize);
 		float sliderValue = GetNormalizedValue();
+
+		Nz::Vector2f sliderPos = GetSliderPos();
 
 		if (infos.texture.IsValid())
 		{
@@ -284,19 +302,19 @@ namespace Ndk
 
 			if (orientation == SliderOrientation_Horizontal)
 			{
-				sliderRenderSize.y = size.y;
+				sliderRenderSize.y = sliderBaseSize.y;
 				sliderRenderSize.x = sliderRenderSize.y / sliderSize.y * sliderSize.x;
-				pos.x = sliderValue * (size.x - sliderRenderSize.x);
+				pos.x = sliderValue * (sliderBaseSize.x - sliderRenderSize.x);
 			}
 			else
 			{
-				sliderRenderSize.x = size.x;
+				sliderRenderSize.x = sliderBaseSize.x;
 				sliderRenderSize.y = sliderRenderSize.x / sliderSize.x * sliderSize.y;
-				pos.y = sliderValue * (size.y - sliderRenderSize.y);
+				pos.y = sliderValue * (sliderBaseSize.y - sliderRenderSize.y);
 			}
 
 			m_sliderSprite->SetSize(sliderRenderSize);
-			m_sliderEntity->GetComponent<NodeComponent>().SetPosition(pos);
+			m_sliderEntity->GetComponent<NodeComponent>().SetPosition(pos + sliderPos);
 		}
 		else m_sliderEntity->Enable(false);
 
@@ -312,26 +330,33 @@ namespace Ndk
 			Nz::Vector2f margin(0, 0);
 			if (orientation == SliderOrientation_Horizontal)
 			{
-				spriteSize.x = size.x - sliderRenderSize.x;
+				spriteSize.x = sliderBaseSize.x - sliderRenderSize.x;
 				spriteSize.y *= sliderRenderSize.y / sliderSize.y;
-				pos.y = (size.y - spriteSize.y) / 2.f;
+				pos.y = (sliderBaseSize.y - spriteSize.y) / 2.f;
 				pos.x = sliderRenderSize.x / 2.f;
 				margin.x = GetBackgroundMargin();
 			}
 			else
 			{
-				spriteSize.y = size.y - sliderRenderSize.y;
+				spriteSize.y = sliderBaseSize.y - sliderRenderSize.y;
 				spriteSize.x *= sliderRenderSize.x / sliderSize.x;
-				pos.x = (size.x - spriteSize.x) / 2.f;
+				pos.x = (sliderBaseSize.x - spriteSize.x) / 2.f;
 				pos.y = sliderRenderSize.y / 2.f;
 				margin.y = GetBackgroundMargin();
 			}
-			m_backEntity->GetComponent<NodeComponent>().SetPosition(pos);
+			m_backEntity->GetComponent<NodeComponent>().SetPosition(pos + sliderPos);
 			m_backSprite->SetSize(spriteSize);
 			m_backSprite->SetSliceMargin(margin.y, margin.y, margin.x, margin.x);
 		}
 		else m_backEntity->Enable(false);
-		
+
+		if (m_textEnabled)
+		{
+			UpdateText();
+			m_textEntity->GetComponent<NodeComponent>().SetPosition(GetTextPos());
+		}
+		else m_textEntity->Enable(false);
+
 	}
 
 	void SimpleSliderWidget::UpdatePreferedSize()
@@ -351,7 +376,15 @@ namespace Ndk
 			size.x *= 10;
 		else size.y *= 10;
 
-		//add text size here
+		if (m_textPosition == ButtonTextAlignment_TopLeft || m_textPosition == ButtonTextAlignment_TopRight || m_textPosition == ButtonTextAlignment_Top
+			|| m_textPosition == ButtonTextAlignment_DownLeft || m_textPosition == ButtonTextAlignment_DownRight || m_textPosition == ButtonTextAlignment_Down)
+			size.y += m_textMaxSize.y;
+		if (m_textPosition == ButtonTextAlignment_TopLeft || m_textPosition == ButtonTextAlignment_DownLeft || m_textPosition == ButtonTextAlignment_Left
+			|| m_textPosition == ButtonTextAlignment_TopRight || m_textPosition == ButtonTextAlignment_DownRight || m_textPosition == ButtonTextAlignment_Right)
+			size.x += m_textMaxSize.x;
+
+		size.x = std::max(size.x, m_textMaxSize.x);
+		size.y = std::max(size.y, m_textMaxSize.y);
 
 		SetPreferredSize(size);
 	}
@@ -369,7 +402,8 @@ namespace Ndk
 
 	void SimpleSliderWidget::OnMouseMoved(int x, int y, int deltaX, int deltaY)
 	{
-		Nz::Vector2f size = GetSize();
+		Nz::Vector2f size = GetSliderSize();
+		Nz::Vector2f pos = GetSliderPos();
 		SliderOrientation orientation = GetOrientation();
 
 		Nz::Rectf buttonRect = GetButtonRect();
@@ -383,8 +417,8 @@ namespace Ndk
 		{
 			float normalizedValue = 0;
 			if (orientation == SliderOrientation_Horizontal)
-				normalizedValue = (x - m_pressOffset) / (size.x - buttonRect.width);
-			else normalizedValue = (y - m_pressOffset) / (size.y - buttonRect.height);
+				normalizedValue = (x - m_pressOffset - pos.x) / (size.x - buttonRect.width);
+			else normalizedValue = (y - m_pressOffset - pos.y) / (size.y - buttonRect.height);
 
 			SetNormalizedValue(normalizedValue);
 		}
@@ -392,8 +426,8 @@ namespace Ndk
 		if (m_backgroundPressed)
 		{
 			if (orientation == SliderOrientation_Horizontal)
-				m_pressOffset = x - buttonRect.x - buttonRect.width / 2;
-			else m_pressOffset = y - buttonRect.y - buttonRect.height / 2;
+				m_pressOffset = x - buttonRect.x - pos.x - buttonRect.width / 2;
+			else m_pressOffset = y - buttonRect.y - pos.y - buttonRect.height / 2;
 		}
 	}
 
@@ -452,10 +486,13 @@ namespace Ndk
 		else if (m_pressOffset < 0)
 			distance *= -1;
 
-		Nz::Vector2f size = GetSize();
+		Nz::Vector2f size = GetSliderSize();
+		Nz::Vector2f pos = GetSliderPos();
 		SliderOrientation orientation = GetOrientation();
 
 		Nz::Rectf buttonRect = GetButtonRect();
+		buttonRect.x -= pos.x;
+		buttonRect.y -= pos.y;
 
 		float value = 0;
 		if (orientation == SliderOrientation_Horizontal)
@@ -474,7 +511,8 @@ namespace Ndk
 
 	Nz::Rectf SimpleSliderWidget::GetButtonRect() const
 	{
-		Nz::Vector2f size = GetSize();
+		Nz::Vector2f size = GetSliderSize();
+		Nz::Vector2f basePos = GetSliderPos();
 		ButtonState state = GetCurrentState();
 		SliderOrientation orientation = GetOrientation();
 		const TextureInfo &infos = m_sliderDatas[orientation][state];
@@ -503,6 +541,62 @@ namespace Ndk
 			pos.y = GetNormalizedValue() * (size.y - sliderRenderSize.y);
 		}
 
-		return Nz::Rectf(pos.x, pos.y, sliderRenderSize.x, sliderRenderSize.y);
+		return Nz::Rectf(basePos.x + pos.x, basePos.y + pos.y, sliderRenderSize.x, sliderRenderSize.y);
+	}
+
+
+	void SimpleSliderWidget::UpdateTextSize()
+	{
+		//assuming that the 0 character is the bigger of this font
+
+		float min = std::abs(GetMin());
+		float max = std::abs(GetMax());
+
+		unsigned int nbChar = 1;
+		if (min > max && min > 1)
+			nbChar = static_cast<unsigned int>(std::log10(min));
+		if(max > min && max > 1)
+			nbChar = static_cast<unsigned int>(std::log10(max));
+
+		if (m_textPrecision > 0)
+			nbChar += m_textPrecision + 1;
+		if (GetMin() < 0 || GetMax() < 0)
+			nbChar++;
+
+		std::string str(nbChar, '0');
+
+		Nz::SimpleTextDrawer drawer = m_textFont.IsValid() ?
+			Nz::SimpleTextDrawer::Draw(m_textFont, str, m_textCharacterSize, m_textStyle, m_textColor) :
+			Nz::SimpleTextDrawer::Draw(str, m_textCharacterSize, m_textStyle, m_textColor);
+
+		Nz::Recti size = drawer.GetBounds();
+
+		m_textMaxSize.x = size.width;
+		m_textMaxSize.y = size.height;
+
+		UpdatePreferedSize();
+
+		Layout();
+	}
+
+	void SimpleSliderWidget::UpdateText()
+	{
+		if (!m_textEnabled)
+			return;
+
+		std::ostringstream streamValue;
+		streamValue.precision(m_textPrecision);
+		streamValue << std::fixed << GetValue();
+
+		Nz::SimpleTextDrawer drawer = m_textFont.IsValid() ?
+			Nz::SimpleTextDrawer::Draw(m_textFont, streamValue.str(), m_textCharacterSize, m_textStyle, m_textColor) :
+			Nz::SimpleTextDrawer::Draw(streamValue.str(), m_textCharacterSize, m_textStyle, m_textColor);
+
+		Nz::Recti size = drawer.GetBounds();
+
+		m_textSize.x = size.width;
+		m_textSize.y = size.height;
+
+		m_textSprite->Update(drawer);
 	}
 }
