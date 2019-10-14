@@ -45,6 +45,7 @@
 #include <NDK/Widgets/Simple/SimpleCheckboxWidget.hpp>
 #include <NDK/Widgets/Simple/SimpleRadioButtonWidget.hpp>
 #include <NDK/Widgets/Simple/SimpleSliderWidget.hpp>
+#include <NDK/Widgets/Simple/SimpleScrollBarWidget.hpp>
 #endif
 
 namespace Ndk
@@ -157,6 +158,12 @@ namespace Ndk
 			if (!SimpleSliderWidget::Initialize())
 			{
 				NazaraError("Failled to initialize Simple Slider Widget");
+				return false;
+			}
+
+			if (!SimpleScrollBarWidget::Initialize())
+			{
+				NazaraError("Failled to initialize Simple ScrollBar widget");
 				return false;
 			}
 			#endif

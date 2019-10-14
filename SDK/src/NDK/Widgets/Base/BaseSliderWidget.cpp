@@ -8,6 +8,7 @@ namespace Ndk
 	m_max{100},
 	m_step{0},
 	m_value{0},
+	m_valueSize{0},
 	m_orientation{SliderOrientation_Horizontal}
 	{
 

@@ -34,7 +34,7 @@ namespace Ndk
 	inline void BaseSliderWidget::SetValue(float value, bool ignoreStep)
 	{
 		value = std::max(value, m_min);
-		value = std::min(value, m_max);
+		value = std::min(value, m_max - m_valueSize);
 
 		if (!ignoreStep && m_step > 0)
 		{
@@ -52,6 +52,27 @@ namespace Ndk
 	inline void BaseSliderWidget::SetNormalizedValue(float value, bool ignoreStep)
 	{
 		SetValue(value * (m_max - m_min) + m_min, ignoreStep);
+	}
+
+	inline void BaseSliderWidget::SetValueSize(float value, bool ignoreStep)
+	{
+		value = std::min(m_max - m_min, value);
+
+		if (!ignoreStep && m_step > 0)
+		{
+			value = std::round(value / m_step) * m_step;
+		}
+
+		m_valueSize = value;
+
+		if (m_value > m_max - m_valueSize)
+			SetValue(m_max - m_valueSize);
+		else Layout();
+	}
+
+	inline void BaseSliderWidget::SetNormalizedValueSize(float value, bool ignoreStep)
+	{
+		SetValueSize(value * (m_max - m_min), ignoreStep);
 	}
 
 	inline void BaseSliderWidget::SetOrientation(SliderOrientation orientation)
@@ -87,6 +108,16 @@ namespace Ndk
 	inline float BaseSliderWidget::GetNormalizedValue() const
 	{
 		return (m_value - m_min) / (m_max - m_min);
+	}
+
+	inline float BaseSliderWidget::GetValueSize() const
+	{
+		return m_valueSize;
+	}
+
+	inline float BaseSliderWidget::GetNormalizedValueSize() const
+	{
+		return m_valueSize / (m_max - m_min);
 	}
 
 	inline SliderOrientation BaseSliderWidget::GetOrientation() const

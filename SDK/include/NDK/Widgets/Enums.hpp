@@ -62,6 +62,17 @@ namespace Ndk
 		SliderOrientation_Max = SliderOrientation_Vertical
 	};
 
+	enum ScrollBarButton
+	{
+		ScrollBarButton_Center,
+		ScrollBarButton_Up,
+		ScrollBarButton_Down,
+		ScrollBarButton_Left,
+		ScrollBarButton_Right,
+
+		ScrollBarButton_Max = ScrollBarButton_Right
+	};
+
 	enum EchoMode
 	{
 		EchoMode_Normal,

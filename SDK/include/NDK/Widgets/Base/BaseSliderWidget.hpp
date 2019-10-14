@@ -22,6 +22,8 @@ namespace Ndk
 		inline void SetStep(float step = 0);
 		inline void SetValue(float value, bool ignoreStep = false);
 		inline void SetNormalizedValue(float value, bool ignoreStep = false);
+		inline void SetValueSize(float value, bool ignoreStep = false);
+		inline void SetNormalizedValueSize(float value, bool ignoreStep = false);
 		inline void SetOrientation(SliderOrientation orientation);
 
 		inline float GetMin() const;
@@ -29,6 +31,8 @@ namespace Ndk
 		inline float GetStep() const;
 		inline float GetValue() const;
 		inline float GetNormalizedValue() const;
+		inline float GetValueSize() const;
+		inline float GetNormalizedValueSize() const;
 		inline SliderOrientation GetOrientation() const;
 
 		NazaraSignal(OnValueChange, float /*value*/);
@@ -44,6 +48,7 @@ namespace Ndk
 		float m_max;
 		float m_step;
 		float m_value;
+		float m_valueSize;
 		SliderOrientation m_orientation;
 	};
 }
