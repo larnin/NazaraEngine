@@ -39,6 +39,19 @@ namespace Ndk
 		ButtonState_All
 	};
 
+	enum FoldState
+	{
+		FoldState_Folded,
+		FoldState_FoldedHovered,
+		FoldState_Opened,
+		FoldState_OpenedHovered,
+		FoldState_Disabled,
+		
+		FoldState_Max = ButtonState_Disabled,
+		
+		FoldState_All
+	};
+
 	enum ButtonTextAlignment
 	{
 		ButtonTextAlignment_TopLeft,

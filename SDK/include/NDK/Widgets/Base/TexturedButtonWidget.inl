@@ -141,10 +141,7 @@ namespace Ndk
 	{
 		m_textSprite->Update(drawer);
 
-		Nz::Vector2f textSize = Nz::Vector2f(m_textSprite->GetBoundingVolume().obb.localBox.GetLengths());
-
 		UpdateSize();
-
 	}
 
 	inline void TexturedButtonWidget::SetTextAlignment(ButtonTextAlignment alignment)
