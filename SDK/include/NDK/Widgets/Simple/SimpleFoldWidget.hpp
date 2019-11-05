@@ -14,7 +14,7 @@
 
 namespace Ndk
 {
-	class SimpleFoldWidget : public BaseWidget
+	class NDK_API SimpleFoldWidget : public BaseWidget
 	{
 		friend class Sdk;
 
@@ -119,8 +119,11 @@ namespace Ndk
 		static bool Initialize();
 		static void Uninitialize();
 
-		static const std::string s_horizontalArrow;
-		static const std::string s_downArrow;
+		static const std::string s_ArrowFolded;
+		static const std::string s_ArrowFoldedHovered;
+		static const std::string s_ArrowOpened;
+		static const std::string s_ArrowOpenedHovered;
+		static const std::string s_ArrowDisabled;
 		static const std::string s_Hover;
 	};
 }

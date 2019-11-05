@@ -4,9 +4,12 @@
 
 namespace Ndk
 {
-	const std::string SimpleFoldWidget::s_horizontalArrow("Ndk::SimpleFoldWidget::HorizontalArrow");
-	const std::string SimpleFoldWidget::s_downArrow("Ndk::SimpleFoldWidget::DownArrow");;
-	const std::string SimpleFoldWidget::s_Hover("Ndk::SimpleFoldWidget::Hover");;
+	const std::string SimpleFoldWidget::s_ArrowFolded("Ndk::SimpleFoldWidget::ArrowFolded");
+	const std::string SimpleFoldWidget::s_ArrowFoldedHovered("Ndk::SimpleFoldWidget::ArrowFoldedHovered");
+	const std::string SimpleFoldWidget::s_ArrowOpened("Ndk::SimpleFoldWidget::ArrowOpened");
+	const std::string SimpleFoldWidget::s_ArrowOpenedHovered("Ndk::SimpleFoldWidget::ArrowOpenedHovered");
+	const std::string SimpleFoldWidget::s_ArrowDisabled("Ndk::SimpleFoldWidget::ArrowDisabled");
+	const std::string SimpleFoldWidget::s_Hover("Ndk::SimpleFoldWidget::Hover");
 
 	SimpleFoldWidget::TextureInfo::TextureInfo()
 		: color{ 255, 255, 255 }
@@ -47,16 +50,18 @@ namespace Ndk
 		m_textEntity->AddComponent<NodeComponent>().SetParent(this);
 		m_textEntity->AddComponent<GraphicsComponent>().Attach(m_textSprite, parentRenderOrderIndex + 3);
 
-		SetArrowTexture(Nz::TextureLibrary::Get(s_horizontalArrow));
-		SetArrowTexture(Nz::TextureLibrary::Get(s_downArrow), FoldState_Opened);
-		SetArrowTexture(Nz::TextureLibrary::Get(s_downArrow), FoldState_OpenedHovered);
+		SetArrowTexture(Nz::TextureLibrary::Get(s_ArrowFolded), FoldState_Folded);
+		SetArrowTexture(Nz::TextureLibrary::Get(s_ArrowFoldedHovered), FoldState_FoldedHovered);
+		SetArrowTexture(Nz::TextureLibrary::Get(s_ArrowOpened), FoldState_Opened);
+		SetArrowTexture(Nz::TextureLibrary::Get(s_ArrowOpenedHovered), FoldState_OpenedHovered);
+		SetArrowTexture(Nz::TextureLibrary::Get(s_ArrowDisabled), FoldState_Disabled);
 
-		SetHoverTexture(Nz::TextureLibrary::Get(s_Hover), FoldState_OpenedHovered);
 		SetHoverTexture(Nz::TextureLibrary::Get(s_Hover), FoldState_FoldedHovered);
+		SetHoverTexture(Nz::TextureLibrary::Get(s_Hover), FoldState_OpenedHovered);
 
-		SetHoverSliceMargin(12u);
+		SetHoverSliceMargin(12.f / m_hoverDatas[FoldState_OpenedHovered].texture->GetWidth());
 
-		Layout();
+		UpdateSize();
 	}
 
 	bool SimpleFoldWidget::Initialize()
@@ -67,14 +72,29 @@ namespace Ndk
 			#include <NDK/Resources/Widgets/Hover.png.h>
 		};
 
-		const Nz::UInt8 r_foldArrow[] =
+		const Nz::UInt8 r_arrowFolded[] =
 		{
-			#include <NDK/Resources/Widgets/FoldArrow.png.h>
+			#include <NDK/Resources/Widgets/FoldArrowFolded.png.h>
 		};
 
-		const Nz::UInt8 r_foldArrowDown[] =
+		const Nz::UInt8 r_arrowFoldedHovered[] =
 		{
-			#include <NDK/Resources/Widgets/FoldArrowDown.png.h>
+			#include <NDK/Resources/Widgets/FoldArrowFoldedHovered.png.h>
+		};
+
+		const Nz::UInt8 r_arrowOpened[] =
+		{
+			#include <NDK/Resources/Widgets/FoldArrowOpened.png.h>
+		};
+
+		const Nz::UInt8 r_arrowOpenedHovered[] =
+		{
+			#include <NDK/Resources/Widgets/FoldArrowOpenedHovered.png.h>
+		};
+
+		const Nz::UInt8 r_arrowDisabled[] =
+		{
+			#include <NDK/Resources/Widgets/FoldArrowDisabled.png.h>
 		};
 
 		Nz::TextureRef hoverTexture = Nz::Texture::LoadFromMemory(r_hover, sizeof(r_hover) / sizeof(r_hover[0]));
@@ -84,23 +104,47 @@ namespace Ndk
 			return false;
 		}
 
-		Nz::TextureRef foldArrowTexture = Nz::Texture::LoadFromMemory(r_foldArrow, sizeof(r_foldArrow) / sizeof(r_foldArrow[0]));
-		if (!foldArrowTexture)
+		Nz::TextureRef arrowFoldedTexture = Nz::Texture::LoadFromMemory(r_arrowFolded, sizeof(r_arrowFolded) / sizeof(r_arrowFolded[0]));
+		if (!arrowFoldedTexture)
 		{
-			NazaraError("Failed to load embedded Widgets/FoldArrow.png");
+			NazaraError("Failed to load embedded Widgets/FoldArrowFolded.png");
 			return false;
 		}
 
-		Nz::TextureRef foldArrowDownTexture = Nz::Texture::LoadFromMemory(r_foldArrowDown, sizeof(r_foldArrowDown) / sizeof(r_foldArrowDown[0]));
-		if (!foldArrowDownTexture)
+		Nz::TextureRef arrowFoldedHoveredTexture = Nz::Texture::LoadFromMemory(r_arrowFoldedHovered, sizeof(r_arrowFoldedHovered) / sizeof(r_arrowFoldedHovered[0]));
+		if (!arrowFoldedHoveredTexture)
 		{
-			NazaraError("Failed to load embedded Widgets/FoldArrowDown.png");
+			NazaraError("Failed to load embedded Widgets/FoldArrowFoldedHovered.png");
+			return false;
+		}
+
+		Nz::TextureRef arrowOpenedTexture = Nz::Texture::LoadFromMemory(r_arrowOpened, sizeof(r_arrowOpened) / sizeof(r_arrowOpened[0]));
+		if (!arrowOpenedTexture)
+		{
+			NazaraError("Failed to load embedded Widgets/FoldArrowOpened.png");
+			return false;
+		}
+
+		Nz::TextureRef arrowOpenedHoveredTexture = Nz::Texture::LoadFromMemory(r_arrowOpenedHovered, sizeof(r_arrowOpenedHovered) / sizeof(r_arrowOpenedHovered[0]));
+		if (!arrowOpenedHoveredTexture)
+		{
+			NazaraError("Failed to load embedded Widgets/FoldArrowOpenedHovered.png");
+			return false;
+		}
+
+		Nz::TextureRef arrowDisabledTexture = Nz::Texture::LoadFromMemory(r_arrowDisabled, sizeof(r_arrowDisabled) / sizeof(r_arrowDisabled[0]));
+		if (!arrowDisabledTexture)
+		{
+			NazaraError("Failed to load embedded Widgets/FoldArrowDisabled.png");
 			return false;
 		}
 
 		Nz::TextureLibrary::Register(s_Hover, std::move(hoverTexture));
-		Nz::TextureLibrary::Register(s_horizontalArrow, std::move(foldArrowTexture));
-		Nz::TextureLibrary::Register(s_downArrow, std::move(foldArrowDownTexture));
+		Nz::TextureLibrary::Register(s_ArrowFolded, std::move(arrowFoldedTexture));
+		Nz::TextureLibrary::Register(s_ArrowFoldedHovered, std::move(arrowFoldedHoveredTexture));
+		Nz::TextureLibrary::Register(s_ArrowOpened, std::move(arrowOpenedTexture));
+		Nz::TextureLibrary::Register(s_ArrowOpenedHovered, std::move(arrowOpenedHoveredTexture));
+		Nz::TextureLibrary::Register(s_ArrowDisabled, std::move(arrowDisabledTexture));
 
 		return true;
 	}
@@ -108,8 +152,11 @@ namespace Ndk
 	void SimpleFoldWidget::Uninitialize()
 	{
 		Nz::TextureLibrary::Unregister(s_Hover);
-		Nz::TextureLibrary::Unregister(s_horizontalArrow);
-		Nz::TextureLibrary::Unregister(s_downArrow);
+		Nz::TextureLibrary::Unregister(s_ArrowFolded);
+		Nz::TextureLibrary::Unregister(s_ArrowFoldedHovered);
+		Nz::TextureLibrary::Unregister(s_ArrowOpened);
+		Nz::TextureLibrary::Unregister(s_ArrowOpenedHovered);
+		Nz::TextureLibrary::Unregister(s_ArrowDisabled);
 	}
 
 	void SimpleFoldWidget::Layout()
@@ -144,6 +191,7 @@ namespace Ndk
 
 		m_textEntity->GetComponent<Ndk::NodeComponent>().SetPosition(GetTextPosition());
 		m_arrowEntity->GetComponent<Ndk::NodeComponent>().SetPosition(m_textMargin, m_textMargin);
+		m_hoverEntity->GetComponent<Ndk::NodeComponent>().SetPosition(0, 0);
 		
 		if (m_areaWidget != nullptr)
 			m_areaWidget->SetPosition(Nz::Vector2f(contentRect.x, contentRect.y));
@@ -156,6 +204,8 @@ namespace Ndk
 		newSize.Minimize(GetMaximumSize());
 
 		SetSize(newSize);
+
+		Layout();
 
 		if (m_areaWidget != nullptr)
 		{
@@ -260,7 +310,7 @@ namespace Ndk
 		float height = std::max(textBox.height, arrowSize.y);
 		float x = arrowSize.x > 0 ? arrowSize.x + m_textMargin : 0;
 
-		return Nz::Vector2f(x + m_textMargin, (height - textBox.height) / 2);
+		return Nz::Vector2f(x + m_textMargin, (height - textBox.height) / 2 + m_textMargin);
 	}
 
 	Nz::Rectf SimpleFoldWidget::GetContentRect() const
@@ -293,7 +343,7 @@ namespace Ndk
 		if (arrowSize.x > 0)
 			size.x = arrowSize.x + textBox.width + m_textMargin * 3;
 		else size.x = textBox.width + m_textMargin * 2;
-		size.y = std::max(arrowSize.y, textBox.height) + m_textMargin;
+		size.y = std::max(arrowSize.y, textBox.height) + m_textMargin * 2;
 
 		return size;
 	}

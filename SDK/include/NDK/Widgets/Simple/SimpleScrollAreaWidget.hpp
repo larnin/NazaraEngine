@@ -11,7 +11,7 @@ namespace Ndk
 {
 	class BaseSliderWidget;
 
-	class SimpleScrollAreaWidget : public BaseWidget
+	class NDK_API SimpleScrollAreaWidget : public BaseWidget
 	{
 	public:
 		SimpleScrollAreaWidget(BaseWidget* parent);

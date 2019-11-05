@@ -350,13 +350,12 @@ namespace Ndk
 		}
 		else m_backEntity->Enable(false);
 
+		m_textEntity->Enable(m_textEnabled);
 		if (m_textEnabled)
 		{
 			UpdateText();
 			m_textEntity->GetComponent<NodeComponent>().SetPosition(GetTextPos());
 		}
-		else m_textEntity->Enable(false);
-
 	}
 
 	void SimpleSliderWidget::UpdatePreferedSize()

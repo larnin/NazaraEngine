@@ -92,6 +92,8 @@ namespace Ndk
 
 		SetSize(newSize);
 
+		Layout();
+
 		Nz::Vector2f hSize(0, 0);
 		Nz::Vector2f vSize(0, 0);
 
