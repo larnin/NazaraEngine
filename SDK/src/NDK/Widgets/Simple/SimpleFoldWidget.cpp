@@ -169,7 +169,9 @@ namespace Ndk
 		TextureInfo & arrowTexture = m_arrowDatas[state];
 		TextureInfo & hoverTexture = m_hoverDatas[state];
 
-		m_arrowEntity->Enable(arrowTexture.texture.IsValid());
+		bool isVisible = IsVisible();
+
+		m_arrowEntity->Enable(arrowTexture.texture.IsValid() && isVisible);
 		if (arrowTexture.texture.IsValid())
 		{
 			m_arrowSprite->SetTexture(arrowTexture.texture, false);
@@ -180,7 +182,7 @@ namespace Ndk
 			m_arrowSprite->SetSize(texSize.x * arrowTexture.textureCoords.width, texSize.y * arrowTexture.textureCoords.height);
 		}
 
-		m_hoverEntity->Enable(hoverTexture.texture.IsValid());
+		m_hoverEntity->Enable(hoverTexture.texture.IsValid() && isVisible);
 		if (hoverTexture.texture.IsValid())
 		{
 			m_hoverSprite->SetTexture(hoverTexture.texture, false);
@@ -222,7 +224,7 @@ namespace Ndk
 
 	FoldState SimpleFoldWidget::GetState() const
 	{
-		if (!IsEnabledInHierarchy())
+		if (!IsEnabled())
 			return FoldState_Disabled;
 		else
 		{
@@ -243,21 +245,7 @@ namespace Ndk
 
 	void SimpleFoldWidget::UpdateSize()
 	{
-		Nz::Vector2f size = CalculateFoldSize();
-
-		if (IsFolded() || m_areaWidget == nullptr)
-		{
-			SetPreferredSize(size);
-			return;
-		}
-
-		Nz::Vector2f areaSize = m_areaWidget->GetPreferredSize();
-
-		areaSize.x += m_contentOffset;
-		size.x = std::max(size.x, areaSize.x);
-		size.y += m_contentMargin + areaSize.y;
-
-		SetPreferredSize(size);
+		ChildResized();
 	}
 
 	void SimpleFoldWidget::OnMouseMoved(int x, int y, int deltaX, int deltaY)
@@ -278,6 +266,25 @@ namespace Ndk
 	void SimpleFoldWidget::OnMouseExit()
 	{
 		SetHovered(false);
+	}
+
+	void SimpleFoldWidget::OnUpdatePreferredSize()
+	{
+		Nz::Vector2f size = CalculateFoldSize();
+
+		if (IsFolded() || m_areaWidget == nullptr)
+		{
+			SetPreferredSize(size, false);
+			return;
+		}
+
+		Nz::Vector2f areaSize = m_areaWidget->GetPreferredSize();
+
+		areaSize.x += m_contentOffset;
+		size.x = std::max(size.x, areaSize.x);
+		size.y += m_contentMargin + areaSize.y;
+
+		SetPreferredSize(size, false);
 	}
 
 	Nz::Rectf SimpleFoldWidget::GetFoldRect() const

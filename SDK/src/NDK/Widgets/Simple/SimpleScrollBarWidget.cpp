@@ -438,6 +438,8 @@ namespace Ndk
 
 	void SimpleScrollBarWidget::Layout()
 	{
+		BaseSliderWidget::Layout();
+
 		Nz::Vector2f size = GetSize();
 
 		SliderOrientation orientation = GetOrientation();
@@ -533,15 +535,15 @@ namespace Ndk
 		bool oldHovered = IsHovered();
 		bool oldMoreHovered = IsButtonMoreHovered();
 		bool oldLessHovered = IsButtonLessHovered();
-		SetHovered(centerButtonRect.Contains(x, y));
-		SetButtonMoreHovered(moreButtonRect.Contains(x, y));
-		SetButtonLessHovered(lessButtonRect.Contains(x, y));
+		SetHovered(centerButtonRect.Contains(static_cast<float>(x), static_cast<float>(y)));
+		SetButtonMoreHovered(moreButtonRect.Contains(static_cast<float>(x), static_cast<float>(y)));
+		SetButtonLessHovered(lessButtonRect.Contains(static_cast<float>(x), static_cast<float>(y)));
 
 		if (!IsButtonMoreHovered())
 			SetButtonMorePressed(false);
 		if (!IsButtonLessHovered())
 			SetButtonLessPressed(false);
-		if (!sliderRect.Contains(x, y))
+		if (!sliderRect.Contains(static_cast<float>(x), static_cast<float>(y)))
 		{
 			SetPressed(false);
 			SetBackgroundPressed(false);
@@ -574,10 +576,10 @@ namespace Ndk
 		Nz::Rectf centerButtonRect = GetCenterButtonBounds();
 		Nz::Rectf sliderRect = GetSliderBounds();
 
-		SetPressed(centerButtonRect.Contains(x, y));
-		SetButtonMorePressed(moreButtonRect.Contains(x, y));
-		SetButtonLessPressed(lessButtonRect.Contains(x, y));
-		SetBackgroundPressed(sliderRect.Contains(x, y) && !IsPressed());
+		SetPressed(centerButtonRect.Contains(static_cast<float>(x), static_cast<float>(y)));
+		SetButtonMorePressed(moreButtonRect.Contains(static_cast<float>(x), static_cast<float>(y)));
+		SetButtonLessPressed(lessButtonRect.Contains(static_cast<float>(x), static_cast<float>(y)));
+		SetBackgroundPressed(sliderRect.Contains(static_cast<float>(x), static_cast<float>(y)) && !IsPressed());
 
 		if (m_currentPressedButton == PressedButton_Center)
 		{
@@ -665,7 +667,7 @@ namespace Ndk
 
 	ButtonState SimpleScrollBarWidget::GetCurrentStateMoreButton() const
 	{
-		if (!IsEnabledInHierarchy())
+		if (!IsEnabled())
 			return ButtonState_Disabled;
 		if (m_buttonMorePressed)
 			return ButtonState_Pressed;
@@ -676,7 +678,7 @@ namespace Ndk
 
 	ButtonState SimpleScrollBarWidget::GetCurrentStateLessButton() const
 	{
-		if (!IsEnabledInHierarchy())
+		if (!IsEnabled())
 			return ButtonState_Disabled;
 		if (m_buttonLessPressed)
 			return ButtonState_Pressed;
@@ -687,7 +689,7 @@ namespace Ndk
 
 	ButtonState SimpleScrollBarWidget::GetCurrentStateCenterButton() const
 	{
-		if (!IsEnabledInHierarchy())
+		if (!IsEnabled())
 			return ButtonState_Disabled;
 		if (m_pressed)
 			return ButtonState_Pressed;

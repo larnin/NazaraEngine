@@ -92,6 +92,7 @@ namespace Ndk
 		void OnMouseMoved(int x, int y, int deltaX, int deltaY) override;
 		void OnMouseButtonPress(int x, int y, Nz::Mouse::Button button) override;
 		void OnMouseExit() override;
+		void OnUpdatePreferredSize() override;
 
 		Nz::Rectf GetFoldRect() const;
 		Nz::Vector2f GetTextPosition() const;

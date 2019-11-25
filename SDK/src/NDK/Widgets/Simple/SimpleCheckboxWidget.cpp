@@ -127,13 +127,15 @@ namespace Ndk
 		if (m_checkSprite == nullptr)
 			return;
 
+		bool isVisible = IsVisible();
+
 		Nz::Rectf buttonRect = GetButtonRect();
 		Nz::Vector2f buttonCenter(buttonRect.x + buttonRect.width / 2, buttonRect.y + buttonRect.height / 2);
 
 		auto state = GetCheckState();
 		if (m_checkDatas[state].texture.IsValid())
 		{
-			m_checkEntity->Enable();
+			m_checkEntity->Enable(isVisible);
 
 			auto checkSize = m_checkDatas[state].texture->GetSize();
 

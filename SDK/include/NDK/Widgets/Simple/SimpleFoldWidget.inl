@@ -12,7 +12,7 @@ namespace Ndk
 		m_areaWidget = widget;
 
 		if (IsFolded())
-			m_areaWidget->SetEnabled(false);
+			m_areaWidget->Show(false);
 
 		return widget;
 	}
@@ -36,12 +36,12 @@ namespace Ndk
 
 		m_folded = folded;
 
+		UpdateSize();
+
 		if (m_areaWidget != nullptr)
-			m_areaWidget->SetEnabled(!folded);
+			m_areaWidget->Show(!folded);
 
 		OnFold(m_folded);
-
-		UpdateSize();
 	}
 
 	inline void SimpleFoldWidget::SetHovered(bool hovered)

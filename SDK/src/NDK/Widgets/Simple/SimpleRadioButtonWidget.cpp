@@ -117,9 +117,11 @@ namespace Ndk
 		bool checked = IsChecked();
 		ButtonInfo & infos = checked ? m_checkedData : m_uncheckedData;
 
+		bool isVisible = IsVisible();
+
 		if (infos.texture.IsValid())
 		{
-			m_checkEntity->Enable();
+			m_checkEntity->Enable(isVisible);
 
 			auto checkSize = infos.texture->GetSize();
 

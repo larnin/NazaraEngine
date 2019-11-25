@@ -23,6 +23,7 @@ namespace Ndk
 	m_enabled(true),
 	m_enabledInHierarchy(true)
 	{
+
 	}
 
 	template<typename T, typename... Args>
@@ -165,22 +166,12 @@ namespace Ndk
 
 	inline bool BaseWidget::IsVisible() const
 	{
-		return m_visible;
-	}
-
-	inline bool BaseWidget::IsVisibleInHierarchy() const
-	{
-		return m_visibleInHierarchy;
+		return m_visible && m_visibleInHierarchy;
 	}
 
 	inline bool BaseWidget::IsEnabled() const
 	{
-		return m_enabled;
-	}
-
-	inline bool BaseWidget::IsEnabledInHierarchy() const
-	{
-		return m_enabledInHierarchy;
+		return m_enabled && m_enabledInHierarchy;
 	}
 
 	inline void BaseWidget::SetFixedHeight(float fixedHeight)
@@ -251,11 +242,12 @@ namespace Ndk
 		SetMinimumSize(minimumSize);
 	}
 
-	inline void BaseWidget::SetPreferredSize(const Nz::Vector2f& preferredSize)
+	inline void BaseWidget::SetPreferredSize(const Nz::Vector2f& preferredSize, bool propagate)
 	{
 		m_preferredSize = preferredSize;
 
-		ChildResized();
+		if(propagate)
+			ChildResized();
 	}
 
 	inline void BaseWidget::SetSize(const Nz::Vector2f& size)

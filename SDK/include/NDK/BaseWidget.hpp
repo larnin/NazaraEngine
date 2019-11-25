@@ -75,10 +75,7 @@ namespace Ndk
 			bool HasFocus() const;
 
 			inline bool IsVisible() const;
-			inline bool IsVisibleInHierarchy() const;
-
 			inline bool IsEnabled() const;
-			inline bool IsEnabledInHierarchy() const;
 
 			void SetBackgroundColor(const Nz::Color& color);
 			void SetCursor(Nz::SystemCursor systemCursor);
@@ -127,9 +124,11 @@ namespace Ndk
 			virtual void OnMouseButtonRelease(int x, int y, Nz::Mouse::Button button);
 			virtual void OnMouseExit();
 			virtual void OnTextEntered(char32_t character, bool repeated);
+			virtual void OnUpdatePreferredSize();
 
-			inline void SetPreferredSize(const Nz::Vector2f& preferredSize);
+			inline void SetPreferredSize(const Nz::Vector2f& preferredSize, bool propagate = true);
 			inline void SetSize(const Nz::Vector2f& size);
+			void ChildResized();
 
 		private:
 			inline BaseWidget();
@@ -141,10 +140,8 @@ namespace Ndk
 			inline void UpdateCanvasIndex(std::size_t index);
 			void UnregisterFromCanvas();
 			void UpdatePositionAndSize();
-			void SetVisibleInHerarchy(bool visible);
-			void SetEnabledInHerarchy(bool enabled);
-
-			void ChildResized();
+			void SetVisibleInHierarchy(bool visible);
+			void SetEnabledInHierarchy(bool enabled);
 
 			struct WidgetEntity
 			{

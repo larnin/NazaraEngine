@@ -115,7 +115,8 @@ namespace Ndk
 
 		m_size = newSize;
 
-		Layout();
+		if(IsVisible())
+			Layout();
 
 		for (auto & child : m_children)
 			child->Resize(child->m_preferredSize);
@@ -164,11 +165,14 @@ namespace Ndk
 				entity.handle->Enable(show);
 
 			for (const auto& widgetPtr : m_children)
-				widgetPtr->SetVisibleInHerarchy(show);
+				widgetPtr->SetVisibleInHierarchy(show);
+
+			if(IsVisible())
+				Layout();
 		}
 	}
 
-	void BaseWidget::SetVisibleInHerarchy(bool visible)
+	void BaseWidget::SetVisibleInHierarchy(bool visible)
 	{
 		if (visible != m_visibleInHierarchy)
 		{
@@ -186,7 +190,10 @@ namespace Ndk
 				entity.handle->Enable(visible);
 
 			for (const auto& widgetPtr : m_children)
-				widgetPtr->SetVisibleInHerarchy(visible);
+				widgetPtr->SetVisibleInHierarchy(visible);
+
+			if (IsVisible())
+				Layout();
 		}
 	}
 
@@ -200,11 +207,13 @@ namespace Ndk
 				return;
 
 			for (const auto& widgetPtr : m_children)
-				widgetPtr->SetEnabledInHerarchy(enabled);
+				widgetPtr->SetEnabledInHierarchy(enabled);
+
+			Layout();
 		}
 	}
 
-	void BaseWidget::SetEnabledInHerarchy(bool enabled)
+	void BaseWidget::SetEnabledInHierarchy(bool enabled)
 	{
 		if (enabled != m_enabledInHierarchy)
 		{
@@ -214,7 +223,9 @@ namespace Ndk
 				return;
 
 			for (const auto& widgetPtr : m_children)
-				widgetPtr->SetEnabledInHerarchy(enabled);
+				widgetPtr->SetEnabledInHierarchy(enabled);
+
+			Layout();
 		}
 	}
 
@@ -306,6 +317,10 @@ namespace Ndk
 	{
 	}
 
+	void BaseWidget::OnUpdatePreferredSize()
+	{
+	}
+
 	void BaseWidget::DestroyChild(BaseWidget* widget)
 	{
 		auto it = std::find_if(m_children.begin(), m_children.end(), [widget] (const std::unique_ptr<BaseWidget>& widgetPtr) -> bool
@@ -363,6 +378,8 @@ namespace Ndk
 
 	void BaseWidget::ChildResized()
 	{
+		OnUpdatePreferredSize();
+
 		if(m_widgetParent == nullptr)
 			Resize(m_preferredSize);
 		else m_widgetParent->ChildResized();

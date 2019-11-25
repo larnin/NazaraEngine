@@ -134,7 +134,7 @@ namespace Ndk
 
 	void TexturedButtonWidget::UpdateState()
 	{
-		if (!IsEnabledInHierarchy())
+		if (!IsEnabled())
 			m_currentButtonState = ButtonState_Disabled;
 		else
 		{

@@ -280,7 +280,7 @@ namespace Ndk
 		SliderOrientation orientation = GetOrientation();
 		
 		TextureInfo &infos = m_sliderDatas[orientation][state];
-		TextureInfo & backInfos = IsEnabledInHierarchy() ? m_back[orientation] : m_backDisabled[orientation];
+		TextureInfo & backInfos = IsEnabled() ? m_back[orientation] : m_backDisabled[orientation];
 
 		Nz::Vector2f sliderSize(32, 32);
 		Nz::Vector2f sliderRenderSize(sliderBaseSize);
@@ -288,12 +288,14 @@ namespace Ndk
 
 		Nz::Vector2f sliderPos = GetSliderPos();
 
+		bool isVisible = IsVisible();
+
 		if (infos.texture.IsValid())
 		{
 			m_sliderSprite->SetTexture(infos.texture, false);
 			m_sliderSprite->SetTextureCoords(infos.textureCoords);
 			m_sliderSprite->SetColor(infos.color);
-			m_sliderEntity->Enable(true);
+			m_sliderEntity->Enable(isVisible);
 
 			Nz::Vector2f pos(0, 0);
 
@@ -316,14 +318,14 @@ namespace Ndk
 			m_sliderSprite->SetSize(sliderRenderSize);
 			m_sliderEntity->GetComponent<NodeComponent>().SetPosition(pos + sliderPos);
 		}
-		else m_sliderEntity->Enable(false);
+		else m_sliderEntity->Disable();
 
 		if (backInfos.texture.IsValid())
 		{
 			m_backSprite->SetTexture(backInfos.texture, false);
 			m_backSprite->SetTextureCoords(backInfos.textureCoords);
 			m_backSprite->SetColor(backInfos.color);
-			m_backEntity->Enable(true);
+			m_backEntity->Enable(isVisible);
 
 			Nz::Vector2f pos(0, 0);
 			Nz::Vector2f spriteSize(backInfos.texture->GetWidth() * backInfos.textureCoords.width, backInfos.texture->GetHeight() * backInfos.textureCoords.height);
@@ -348,9 +350,9 @@ namespace Ndk
 			m_backSprite->SetSize(spriteSize);
 			m_backSprite->SetSliceMargin(margin.y, margin.y, margin.x, margin.x);
 		}
-		else m_backEntity->Enable(false);
+		else m_backEntity->Disable();
 
-		m_textEntity->Enable(m_textEnabled);
+		m_textEntity->Enable(m_textEnabled && isVisible);
 		if (m_textEnabled)
 		{
 			UpdateText();
@@ -390,7 +392,7 @@ namespace Ndk
 
 	ButtonState SimpleSliderWidget::GetCurrentState() const
 	{
-		if (!IsEnabledInHierarchy())
+		if (!IsEnabled())
 			return ButtonState_Disabled;
 		if (m_pressed)
 			return ButtonState_Pressed;
@@ -570,8 +572,8 @@ namespace Ndk
 
 		Nz::Recti size = drawer.GetBounds();
 
-		m_textMaxSize.x = size.width;
-		m_textMaxSize.y = size.height;
+		m_textMaxSize.x = static_cast<float>(size.width);
+		m_textMaxSize.y = static_cast<float>(size.height);
 
 		UpdatePreferedSize();
 
@@ -593,8 +595,8 @@ namespace Ndk
 
 		Nz::Recti size = drawer.GetBounds();
 
-		m_textSize.x = size.width;
-		m_textSize.y = size.height;
+		m_textSize.x = static_cast<float>(size.width);
+		m_textSize.y = static_cast<float>(size.height);
 
 		m_textSprite->Update(drawer);
 	}
